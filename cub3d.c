@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/29 15:11:27 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/29 19:10:09 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@ t_point	rotate_vector(t_point point, double angle)
 	return (result);
 }
 
+double	vector_len(t_point point)
+{
+	return (sqrt(point.x * point.x + point.y * point.y));
+}
+
 int		key_pressed(int keycode, t_vars *vars)
 {
 	
@@ -42,11 +47,11 @@ int		key_pressed(int keycode, t_vars *vars)
 		vars->player.position.y += vars->player.direction.y * vars->player.speed;
 		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.y -= vars->player.direction.y * vars->player.speed;
-		printf("pos: %f %f\n", vars->player.position.x, vars->player.position.y);
 	}
 	else if (keycode == 0)  // A
 	{
 		vars->player.direction = rotate_vector(vars->player.direction, -PI / 20);
+		vars->player.plane = rotate_vector(vars->player.plane, -PI / 20);
 	}
 	else if (keycode == 1)  // S
 	{
@@ -56,11 +61,12 @@ int		key_pressed(int keycode, t_vars *vars)
 		vars->player.position.y -= vars->player.direction.y * vars->player.speed;
 		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.y += vars->player.direction.y * vars->player.speed;
-		printf("pos: %f %f\n", vars->player.position.x, vars->player.position.y);
+		// printf("pos: %f %f\n", vars->player.position.x, vars->player.position.y);
 	}
 	else if (keycode == 2)  // D
 	{
 		vars->player.direction = rotate_vector(vars->player.direction, PI / 20);
+		vars->player.plane = rotate_vector(vars->player.plane, PI / 20);
 	}
 	else if (keycode == 53)
 	{
@@ -183,95 +189,110 @@ void	cast_rays(t_image *image, t_vars *vars)
 {
 	t_point ray;
 	t_point step;
-	float	ray_len;
-	float	len_of_y_delta;
-	float	len_of_x_delta;
-	float	len_to_y_side;
-	float	len_to_x_side;
+	t_point	delta_v;
+	t_point	delta_h;
+	t_point	side_v;
+	t_point	side_h;
 	float	i;
-	int		side;
-	float		len_to_wall;
+	char	side;
 	
 	int		map_x;
 	int		map_y;
 	
 	i = 0;
-	map_x = (int)vars->player.position.x;
-	map_y = (int)vars->player.position.y;
-	vars->player.plane.x = 0;
-	vars->player.plane.y = -1;
-	while (i < PI / 3)
+
+	while (i < 81)
 	{
-		len_of_y_delta = 0;
-		len_of_x_delta = 0;
-		// ray = ft_point_add(vars->player.direction, rotate_vector(vars->player.plane, 0.3));
-		ray = rotate_vector(vars->player.direction, i);
-		// ray = vars->player.direction;
-		ray_len = sqrt(ray.x * ray.x + ray.y * ray.y);
-		if (ray.y)
-			len_of_y_delta = (ray.y > 0) ? ray_len / ray.y : -ray_len / ray.y;
-		if (ray.x)
-			len_of_x_delta = (ray.x > 0) ? ray_len / ray.x : -ray_len / ray.x;
+		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / 81.0 - 1);
+		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / 81.0 - 1);
 		
-		step.x = (ray.x < 0) ? -1 : 1;
-		step.y = (ray.y < 0) ? -1 : 1;
-		if (ray.x < 0)
-			len_to_x_side = (vars->player.position.x - map_x) * len_of_x_delta;
-		else
-			len_to_x_side = (map_x + 1.0 - vars->player.position.x) * len_of_x_delta;
+		delta_v.x = (ray.x >= 0 ? 1 : -1);
+		delta_h.y = (ray.y >= 0 ? 1 : -1);
+		delta_v.y = (ray.x) ? ray.y / ray.x : 0;
+		delta_h.x = (ray.y) ? ray.x / ray.y : 0;
+		if (ray.x < 0 && delta_h.x > 0)
+			delta_h.x *= -1;
+		if (ray.x > 0 && delta_h.x < 0)
+			delta_h.x *= -1;
+		if (ray.y < 0 && delta_v.y > 0)
+			delta_v.y *= -1;
+		if (ray.y > 0 && delta_v.y < 0)
+			delta_v.y *= -1;
+
+
+		map_x = (int)vars->player.position.x;
+		map_y = (int)vars->player.position.y;
 		if (ray.y < 0)
-			len_to_y_side = (vars->player.position.y - map_y) * len_of_y_delta;
+		{
+			step.y = -1;
+			side_h.y = -(vars->player.position.y - map_y);
+			side_h.x = (side_h.y > 0 ? side_h.y : -side_h.y) * delta_h.x;
+		}
 		else
-			len_to_y_side = (map_y + 1.0 - vars->player.position.y) * len_of_y_delta;
+		{
+			step.y = 1;
+			side_h.y = (map_y + 1 - vars->player.position.y);
+			side_h.x = (side_h.y > 0 ? side_h.y : -side_h.y) * delta_h.x;
+		}
 		
-		// printf("len: %f %f\n", len_to_x_side, len_to_y_side);
-		// DDA
+		if (ray.x == 0)
+			ray.x = 0.01;  // do something else
+		if (ray.x < 0)
+		{
+			step.x = -1;
+			side_v.x = -(vars->player.position.x - map_x);
+			side_v.y = (side_v.x > 0 ? side_v.x : -side_v.x) * delta_v.y; // no abs
+		}
+		else
+		{
+			step.x = 1;
+			side_v.x = (map_x + 1 - vars->player.position.x);
+			side_v.y = (side_v.x > 0 ? side_v.x : -side_v.x) * delta_v.y;
+		}
+		
 		while (1)
 		{
-			if (len_to_x_side < len_to_y_side)
+			if (vector_len(side_v) < vector_len(side_h))
 			{
-				len_to_x_side += len_of_x_delta;
+				side = 'v';
 				map_x += step.x;
-				side = 0;
+				if (vars->map->field[map_y][map_x] == '1')
+					break;
+				side_v = ft_point_add(side_v, delta_v);
 			}
+			// else if both equal
 			else
 			{
-				len_to_y_side += len_of_y_delta;
+				side = 'h';
 				map_y += step.y;
-				side = 1;
+				if (vars->map->field[map_y][map_x] == '1')
+					break;
+				side_h = ft_point_add(side_h, delta_h);
 			}
-			if (map_y >= vars->map->y || map_x >= vars->map->x[map_y] ||
-				map_y < 0 || map_x < 0) //delete
-			{
-				map_y = (int)vars->player.position.y;
-				map_x = (int)vars->player.position.x;
-				break;
-			}
-			if (vars->map->field[map_y][map_x] == '1')
-				break;
 		}
-		float len_len;
-		if (side)
+
+		t_point		wall;
+		if (side == 'v')
 		{
-			len_to_wall = (map_y - vars->player.position.y + (1 - step.y) / 2) / ray.y; // ?
-			len_len = len_to_y_side - len_of_y_delta ;
+			wall.x = side_v.x;
+			wall.y = side_v.y;
 		}
 		else
 		{
-			len_to_wall = (map_x - vars->player.position.x + (1 - step.x) / 2) / ray.x; // ?
-			len_len = len_to_x_side - len_of_x_delta ;
+			wall.x = side_h.x;
+			wall.y = side_h.y;
 		}
 	
-		t_point pos_p;
-		pos_p.x = vars->player.position.x * 20;
-		pos_p.y = vars->player.position.y * 20;
+		t_point from;
 		t_point to;
-		to.x = pos_p.x + (len_len * ray.x) / ray_len * 20;
-		to.y = pos_p.y + (len_len * ray.y) / ray_len * 20;
-		draw_line(image, pos_p, to, 0x00FFFFFF);
+		from.x = vars->player.position.x * 20;
+		from.y = vars->player.position.y * 20;
+		to.x = from.x + wall.x * 20;
+		to.y = from.y + wall.y * 20;
+		draw_line(image, from, to, 0x00FFFFFF);
 		
 		
-		i += PI / 180;
+		i++;
 	}
 }
 

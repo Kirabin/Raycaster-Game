@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/29 10:52:46 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/29 17:37:33 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,8 @@ int		read_map(char *file, t_vars *vars)
 					vars->player.direction.y = -1;
 					vars->player.position.x = j + 0.5;
 					vars->player.position.y = i + 0.5;
+					vars->player.plane.x = -0.66;
+					vars->player.plane.y = 0;
 				}
 				else if (line[j] == 'E')
 				{
@@ -182,6 +184,8 @@ int		read_map(char *file, t_vars *vars)
 					vars->player.direction.y = 0;
 					vars->player.position.x = j + 0.5;
 					vars->player.position.y = i + 0.5;
+					vars->player.plane.x = 0;
+					vars->player.plane.y = -0.66;
 				}
 				else if (line[j] == 'W')
 				{
@@ -189,6 +193,8 @@ int		read_map(char *file, t_vars *vars)
 					vars->player.direction.y = 0;
 					vars->player.position.x = j + 0.5;
 					vars->player.position.y = i + 0.5;
+					vars->player.plane.x = 0;
+					vars->player.plane.y = 0.66;
 				}
 				else if (line[j] == 'S')
 				{
@@ -196,6 +202,8 @@ int		read_map(char *file, t_vars *vars)
 					vars->player.direction.y = 1;
 					vars->player.position.x = j + 0.5;
 					vars->player.position.y = i + 0.5;
+					vars->player.plane.x = 0.66;
+					vars->player.plane.y = 0;
 				}
 				j++;
 			}
