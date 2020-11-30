@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 11:47:49 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 17:20:14 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	put_pixel(t_image *image, int x, int y, int color)
 	dst = image->address + (y * image->len + x * (image->bits_per_pixel / 8));  // why offset;
 	*(unsigned int *)dst = color;
 }
+
+
 
 t_point	rotate_vector(t_point point, double angle)
 {
@@ -103,6 +105,38 @@ void	draw_line(t_image *image, int x1, int y1, int x2, int y2, int color)
 		{
 			ratio = y * 1.0 / ft_absi(delta.y);
 			put_pixel(image, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), color);
+			y++;
+		}
+	}
+}
+
+void	draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_color color)
+{
+	t_point	delta;
+	float			ratio;
+	int				x;
+	int				y;
+
+	ratio = 0;
+	delta.x = x2 - x1;
+	delta.y = y2 - y1;
+	// if (ft_absi(delta.y) < ft_absi(delta.x))
+	// {
+	// 	x = 0;
+	// 	while (x <= ft_absi(delta.x))
+	// 	{
+	// 		ratio = x * 1.0 / ft_absi(delta.x);
+	// 		put_pixel(image, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
+	// 		x++;
+	// 	}
+	// }
+	if (1)
+	{
+		y = 0;
+		while (y <= ft_absi(delta.y))
+		{
+			ratio = y * 1.0 / ft_absi(delta.y);
+			put_pixel(image, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), dim_color(color, y / 3));
 			y++;
 		}
 	}
@@ -254,7 +288,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 		{
 			if (!dont_go_v && vector_len(side_v) < vector_len(side_h))
 			{
-				side = 'v';
+				side = (ray.x > 0) ? 'e' : 'w';
 				map_x += step.x;
 				if (vars->map->field[map_y][map_x] == '1')
 					break;
@@ -263,7 +297,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 			// else if both equal
 			else
 			{
-				side = 'h';
+				side = (ray.y > 0) ? 's' : 'n';
 				map_y += step.y;
 				if (vars->map->field[map_y][map_x] == '1')
 					break;
@@ -272,24 +306,24 @@ void	cast_rays(t_image *image, t_vars *vars)
 		}
 
 		t_point		wall;
-		if (side == 'v')
+		if (side == 'w' || side == 'e')
 		{
 			wall.x = side_v.x;
 			wall.y = side_v.y;
 		}
-		else
+		else 
 		{
 			wall.x = side_h.x;
 			wall.y = side_h.y;
 		}
 	
-		t_point from;
-		t_point to;
-		from.x = vars->player.position.x * 20;
-		from.y = vars->player.position.y * 20;
-		to.x = from.x + wall.x * 20;
-		to.y = from.y + wall.y * 20;
-		draw_line(image, (int)from.x, (int)from.y, (int)to.x, (int)to.y, 0x00FFFFFF);
+		// t_point from;
+		// t_point to;
+		// from.x = vars->player.position.x * 20;
+		// from.y = vars->player.position.y * 20;
+		// to.x = from.x + wall.x * 20;
+		// to.y = from.y + wall.y * 20;
+		// draw_line(image, (int)from.x, (int)from.y, (int)to.x, (int)to.y, 0x00FFFFFF);
 		
 		
 		float wall_dist;
@@ -314,8 +348,55 @@ void	cast_rays(t_image *image, t_vars *vars)
 		if (line_end_y > vars->map->resolution.y)
 			line_end_y = vars->map->resolution.y - 5;
 		
-		draw_line(image, -i, line_start_y, -i, line_end_y, (side == 'h') ? 0x00F4A200 : 0x00F19202);
-
+		
+		t_color north_color;
+		north_color.r = 0xed; 
+		north_color.g = 0x55;
+		north_color.b = 0x3b;
+		north_color.argb = argb_color(0, north_color.r, north_color.g, north_color.b);
+		
+		t_color east_color;  //0x00F4A200
+		east_color.r = 0xf6;
+		east_color.g = 0xd5;
+		east_color.b = 0x5c;
+		east_color.argb = argb_color(0, east_color.r, east_color.g, east_color.b);
+		
+		t_color west_color;
+		west_color.r = 0x3C;
+		west_color.g = 0xAE;
+		west_color.b = 0xA3;
+		west_color.argb = argb_color(0, west_color.r, west_color.g, west_color.b);
+		
+		t_color south_color;
+		south_color.r = 0x20;
+		south_color.g = 0x63;
+		south_color.b = 0x9B;
+		south_color.argb = argb_color(0, south_color.r, south_color.g, south_color.b);
+		
+		if (side == 'n')
+		{
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(north_color, wall_dist_perp * 8));
+			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+		}
+		else if (side == 'e')
+		{
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(east_color, wall_dist_perp * 8));
+			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+		}
+		else if (side == 'w')
+		{
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(west_color, wall_dist_perp * 8));
+			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+		}
+		else if (side == 's')
+		{
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(south_color, wall_dist_perp * 8));
+			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+		}
 		i++;
 	}
 }
@@ -340,46 +421,53 @@ void	draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color)
 
 int		render_next_frame(t_vars *vars)
 {
-	t_image	image;
-	t_image walls;
+	t_image	frame;
 
-	t_point step_to;
+	frame.image = mlx_new_image(vars->mlx, vars->map->resolution.x, vars->map->resolution.y); // change name of map-> resolutiodn
+	frame.address = mlx_get_data_addr(frame.image, &frame.bits_per_pixel, &frame.len, &frame.endian);
 
-	walls.image = mlx_xpm_file_to_image(vars->mlx, "images/walls.xpm", &walls.width, &walls.height);
-	image.image = mlx_new_image(vars->mlx, vars->map->resolution.x, vars->map->resolution.y); // change name of map-> resolutiodn
-	image.address = mlx_get_data_addr(image.image, &image.bits_per_pixel, &image.len, &image.endian);
+	cast_rays(&frame, vars);
+	// draw_map(&image, vars);
 
-	draw_rectangle(&image, 0, 0, vars->map->resolution.x, vars->map->resolution.y / 2, vars->map->texture.ceilling.argb);
-	draw_rectangle(&image, 0, vars->map->resolution.y / 2, vars->map->resolution.x, vars->map->resolution.y - 1, vars->map->texture.floor.argb);
-	cast_rays(&image, vars);
-	draw_map(&image, vars);
-
-	mlx_put_image_to_window(vars->mlx, vars->window, image.image, 0, 0);
-	// mlx_put_image_to_window(vars->mlx, vars->window, walls.image, 0, 0);
-	mlx_destroy_image(vars->mlx, image.image);
+	mlx_put_image_to_window(vars->mlx, vars->window, frame.image, 0, 0);
+	// mlx_put_image_to_window(vars->mlx, vars->window, vars->map->texture.north.image, 0, 0);
+	mlx_destroy_image(vars->mlx, frame.image);
 	return (1); // what is return of this funcion? 	
+}
+
+t_vars	*default_vars(void)
+{
+	t_vars	*vars;
+	t_map	*map;
+
+	if (!(vars = malloc(sizeof(t_vars))))
+		return (0);
+	if (!(map = malloc(sizeof(t_map))))
+		return (0);
+	map->y = 0;
+	vars->map = map;
+	vars->player.speed = 0.15;
+	vars->mlx = mlx_init();
+	return (vars);
 }
 
 int		main(int argc, char **argv)
 {
+	t_vars	*vars;
 
-	char	*file;
-	t_vars	vars;
-	int		i;
 
-	i = 0;
-	vars.player.speed = 0.15;
-	if (!(read_map(argv[1], &vars)))
+	if (!(vars = default_vars()))
 		return (-1);
-	if (!validate_map(vars.map))
+	if (!read_map(argv[1], vars))
 		return (-1);
-	ft_putcppn_fd(vars.map->field, vars.map->y, 1);
-	vars.mlx = mlx_init();
-	vars.window = mlx_new_window(vars.mlx, vars.map->resolution.x, vars.map->resolution.y, "kindow");
+	if (!validate_map(vars->map))
+		return (-1);
+	ft_putcppn_fd(vars->map->field, vars->map->y, 1);
 
-	mlx_hook(vars.window, 2, 1L<<0, key_pressed, &vars);  // why mask ? 
-	mlx_loop_hook(vars.mlx, render_next_frame, &vars);
-	mlx_loop(vars.mlx);
+	vars->window = mlx_new_window(vars->mlx, vars->map->resolution.x, vars->map->resolution.y, "kindow");
+	mlx_hook(vars->window, 2, 1L<<0, key_pressed, vars);  // why mask ? 
+	mlx_loop_hook(vars->mlx, render_next_frame, vars);
+	mlx_loop(vars->mlx);
 
 	return (0);
 }

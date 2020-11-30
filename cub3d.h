@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 11:23:18 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 16:36:47 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,25 @@ typedef struct		s_color
 	int				argb;
 }					t_color;
 
+typedef struct		s_image
+{
+	void			*image;
+	char			*address; // ?
+	int				bits_per_pixel;
+	int				len;
+	int				endian; // ?
+	int				width;
+	int				height;
+	
+}					t_image;
+
 typedef struct		s_texture
 {
-	char			*north;
-	char			*east;
-	char			*south;
-	char			*west;
-	char			*sprite;
+	t_image			north;
+	t_image			east;
+	t_image			south;
+	t_image			west;
+	t_image			sprite;
 	t_color			floor;
 	t_color			ceilling;
 }					t_texture;
@@ -47,17 +59,6 @@ typedef struct		s_map
 	t_texture		texture;
 }					t_map;
 
-typedef struct		s_image
-{
-	void			*image;
-	char			*address; // ?
-	int				bits_per_pixel;
-	int				len;
-	int				endian; // ?
-	int				width;
-	int				height;
-	
-}					t_image;
 
 typedef struct		s_player
 {
@@ -77,5 +78,13 @@ typedef struct		s_vars
 
 int					read_map(char *file, t_vars *vars);
 int					validate_map(t_map *map);
+
+/*
+**  COLOR_C
+*/
+t_color				parce_color(const char *line);
+int					dim_color(t_color color, int value);
+int					argb_color(int a, int r, int g, int b);
+
 
 #endif
