@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/29 10:27:42 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 11:23:18 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@
 
 typedef struct		s_color
 {
-	int				alpha;
+	int				a;
 	int				r;
 	int				g;
 	int				b;
-	int				all;
+	int				argb;
 }					t_color;
 
 typedef struct		s_texture

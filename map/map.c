@@ -6,11 +6,16 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/29 17:37:33 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 11:27:17 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+int		argb_color(int a, int r, int g, int b)
+{
+	return(a << 24 | r << 16 | g << 8 | b);
+}
 
 void	parce_resolution(t_map *map, const char *line)
 {
@@ -20,33 +25,21 @@ void	parce_resolution(t_map *map, const char *line)
 	map->resolution.y = ft_atoi(line);
 }
 
-void	parce_floor(t_map *map, const char *line)
+t_color		parce_color(t_map *map, const char *line)
 {
 	int		r;
 	int		g;
 	int		b;
 	t_color	color;
-	
-	
-	line = ft_strskip_char(line, ' ');
-	map->texture.floor.r = ft_atoi(line);
-	line = ft_strchr(line, ',') + 1;
-	map->texture.floor.g = ft_atoi(line);
-	line = ft_strchr(line, ',') + 1;
-	map->texture.floor.b = ft_atoi(line);
-	
-	// combine_color()
-	// map->texture.floor = color;
-}
 
-void	parce_ceilling(t_map *map, const char *line)
-{
 	line = ft_strskip_char(line, ' ');
-	map->texture.ceilling.r = ft_atoi(line);
+	color.r = ft_atoi(line);
 	line = ft_strchr(line, ',') + 1;
-	map->texture.ceilling.g = ft_atoi(line);
+	color.g = ft_atoi(line);
 	line = ft_strchr(line, ',') + 1;
-	map->texture.ceilling.b = ft_atoi(line);
+	color.b = ft_atoi(line);
+	color.argb = argb_color(0, color.r, color.g, color.b);
+	return (color);
 }
 
 void	free_map(t_map *map)
@@ -77,9 +70,9 @@ int		parce_map_element(t_map *map, char *line)
 	if (*line == 'R')
 		parce_resolution(map, line + 1);
 	else if (*line == 'F')
-		parce_floor(map, line + 1);
+		map->texture.floor = parce_color(map, line + 1);
 	else if (*line == 'C')
-		parce_ceilling(map, line + 1);
+		map->texture.ceilling = parce_color(map, line + 1);
 	else if (*line == 'S' && *(line + 1) != 'O')
 		map->texture.sprite = ft_strdup(ft_strskip_char(line + 1, ' '));
 	else if (ft_strncmp(line, "NO", 2) == 0)

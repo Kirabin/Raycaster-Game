@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/29 19:10:09 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 11:47:49 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int		key_pressed(int keycode, t_vars *vars)
 	return (1); // what is return of this funcion? 
 }
 
-void	draw_line(t_image *image, t_point from, t_point to, int color)
+void	draw_line(t_image *image, int x1, int y1, int x2, int y2, int color)
 {
 	t_point	delta;
 	float			ratio;
@@ -84,15 +84,15 @@ void	draw_line(t_image *image, t_point from, t_point to, int color)
 	int				y;
 
 	ratio = 0;
-	delta.x = to.x - from.x;
-	delta.y = to.y - from.y;
+	delta.x = x2 - x1;
+	delta.y = y2 - y1;
 	if (ft_absi(delta.y) < ft_absi(delta.x))
 	{
 		x = 0;
 		while (x <= ft_absi(delta.x))
 		{
 			ratio = x * 1.0 / ft_absi(delta.x);
-			put_pixel(image, from.x + x * (delta.x > 0 ? 1 : -1), from.y + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
+			put_pixel(image, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
 			x++;
 		}
 	}
@@ -102,7 +102,7 @@ void	draw_line(t_image *image, t_point from, t_point to, int color)
 		while (y <= ft_absi(delta.y))
 		{
 			ratio = y * 1.0 / ft_absi(delta.y);
-			put_pixel(image, from.x + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), from.y + y * (delta.y > 0 ? 1 : -1), color);
+			put_pixel(image, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), color);
 			y++;
 		}
 	}
@@ -146,24 +146,26 @@ void	draw_square(t_image *image, int x, int y, int radius, int color)
 	}
 }
 
-void	draw_map(t_image *image, t_map *map)
+void	draw_map(t_image *image, t_vars *vars)
 {
 	int		i;
 	int		j;
 	int		radius = 20;
 	
 	i = 0;
-	while (i < map->y)
+	while (i < vars->map->y)
 	{
 		j = 0;
-		while (j < map->x[i])
+		while (j < vars->map->x[i])
 		{
-			// ft_printf("%s\n", map->field[i]);
-			if (map->field[i][j] == '1')
+			// ft_printf("%s\n", vars->map->field[i]);
+			if (vars->map->field[i][j] == '1')
 			{
-				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00F4A200);
+				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00FFA700);
 			}
-			else if (ft_strchr("NEWS", map->field[i][j]))
+			// else if (vars->map->field[i][j] == '0')
+			// 	draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00000000);
+			else if (ft_strchr("NEWS", vars->map->field[i][j]))
 			{
 				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x0011FF11);
 			}
@@ -172,11 +174,6 @@ void	draw_map(t_image *image, t_map *map)
 		}
 		i++;
 	}
-}
-
-void	draw_player(t_image *image, t_vars *vars)
-{
-	int		radius = 20;
 	t_point pos;
 	
 	pos.x = vars->player.position.x * 20;
@@ -201,10 +198,10 @@ void	cast_rays(t_image *image, t_vars *vars)
 	
 	i = 0;
 
-	while (i < 81)
+	while (i < vars->map->resolution.x)
 	{
-		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / 81.0 - 1);
-		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / 81.0 - 1);
+		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / vars->map->resolution.x - 1);
+		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / vars->map->resolution.x - 1);
 		
 		delta_v.x = (ray.x >= 0 ? 1 : -1);
 		delta_h.y = (ray.y >= 0 ? 1 : -1);
@@ -235,8 +232,11 @@ void	cast_rays(t_image *image, t_vars *vars)
 			side_h.x = (side_h.y > 0 ? side_h.y : -side_h.y) * delta_h.x;
 		}
 		
+		int dont_go_v = 0;
 		if (ray.x == 0)
-			ray.x = 0.01;  // do something else
+		{
+			dont_go_v = 1;
+		}
 		if (ray.x < 0)
 		{
 			step.x = -1;
@@ -252,7 +252,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 		
 		while (1)
 		{
-			if (vector_len(side_v) < vector_len(side_h))
+			if (!dont_go_v && vector_len(side_v) < vector_len(side_h))
 			{
 				side = 'v';
 				map_x += step.x;
@@ -289,9 +289,51 @@ void	cast_rays(t_image *image, t_vars *vars)
 		from.y = vars->player.position.y * 20;
 		to.x = from.x + wall.x * 20;
 		to.y = from.y + wall.y * 20;
-		draw_line(image, from, to, 0x00FFFFFF);
+		draw_line(image, (int)from.x, (int)from.y, (int)to.x, (int)to.y, 0x00FFFFFF);
 		
 		
+		float wall_dist;
+		float cos_angle;
+		float sin_angle;
+		float wall_dist_perp;
+		wall_dist = vector_len(wall);
+		cos_angle = (vars->player.plane.x * wall.x + vars->player.plane.y * wall.y) /
+					(wall_dist * vector_len(vars->player.plane));
+		sin_angle = sqrt(1 - cos_angle * cos_angle);
+		wall_dist_perp = sin_angle * wall_dist;
+		
+
+		int		line_height = (int)(vars->map->resolution.y / wall_dist_perp); // wall_dist_perp;
+		int		line_start_y;
+		int		line_end_y;
+		
+		line_start_y = -line_height / 2 + vars->map->resolution.y / 2;
+		if (line_start_y < 0)
+			line_start_y = 0;
+		line_end_y = line_height / 2 + vars->map->resolution.y / 2;
+		if (line_end_y > vars->map->resolution.y)
+			line_end_y = vars->map->resolution.y - 5;
+		
+		draw_line(image, -i, line_start_y, -i, line_end_y, (side == 'h') ? 0x00F4A200 : 0x00F19202);
+
+		i++;
+	}
+}
+
+void	draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color)
+{
+	int		i;
+	int		j;
+	
+	i = 1;
+	while (i <= x2)
+	{
+		j = y1;
+		while (j <= y2)
+		{
+			put_pixel(image, i, j, color);
+			j++;
+		}
 		i++;
 	}
 }
@@ -300,33 +342,18 @@ int		render_next_frame(t_vars *vars)
 {
 	t_image	image;
 	t_image walls;
-	
+
 	t_point step_to;
 
 	walls.image = mlx_xpm_file_to_image(vars->mlx, "images/walls.xpm", &walls.width, &walls.height);
 	image.image = mlx_new_image(vars->mlx, vars->map->resolution.x, vars->map->resolution.y); // change name of map-> resolutiodn
 	image.address = mlx_get_data_addr(image.image, &image.bits_per_pixel, &image.len, &image.endian);
 
-
-	draw_map(&image, vars->map);
-	draw_player(&image, vars);
-
-	// step_to.x = vars->player.position.x + vars->player.direction.x * 100;
-	// step_to.y = vars->player.position.y + vars->player.direction.y * 100;
-	// draw_line(&image, vars->player.position, step_to, 0x00F4A261);
-	
-	// rotating clockwise
-	// step_to = rotate_vector(vars->player.position, step_to, 0.3);
-	// draw_line(&image, vars->player.position, step_to, 0x00FF0000);
-	
-	// rotating counter clockwise
-	// step_to = rotate_vector(vars->player.position, step_to, -0.6);
-	// draw_line(&image, vars->player.position, step_to, 0x00FF0000);
+	draw_rectangle(&image, 0, 0, vars->map->resolution.x, vars->map->resolution.y / 2, vars->map->texture.ceilling.argb);
+	draw_rectangle(&image, 0, vars->map->resolution.y / 2, vars->map->resolution.x, vars->map->resolution.y - 1, vars->map->texture.floor.argb);
 	cast_rays(&image, vars);
-	
-	// draw_circle(&image, vars->player.position, 5, 0x00E76F51);
-	
-	// mlx_string_put(vars->mlx, vars->window, 100, 100, 0x00E76F51, "hello");
+	draw_map(&image, vars);
+
 	mlx_put_image_to_window(vars->mlx, vars->window, image.image, 0, 0);
 	// mlx_put_image_to_window(vars->mlx, vars->window, walls.image, 0, 0);
 	mlx_destroy_image(vars->mlx, image.image);
