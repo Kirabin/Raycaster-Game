@@ -6,36 +6,13 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 17:20:14 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 18:25:07 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 #include <stdio.h> //delete
 
-void	put_pixel(t_image *image, int x, int y, int color)
-{
-	char	*dst;
-	
-	dst = image->address + (y * image->len + x * (image->bits_per_pixel / 8));  // why offset;
-	*(unsigned int *)dst = color;
-}
-
-
-
-t_point	rotate_vector(t_point point, double angle)
-{
-	t_point	result;
-
-	result.x = point.x * cos(angle) - point.y * sin(angle);
-	result.y = point.x * sin(angle) + point.y * cos(angle);
-	return (result);
-}
-
-double	vector_len(t_point point)
-{
-	return (sqrt(point.x * point.x + point.y * point.y));
-}
 
 int		key_pressed(int keycode, t_vars *vars)
 {
@@ -44,31 +21,31 @@ int		key_pressed(int keycode, t_vars *vars)
 	if (keycode == 13)  // W
 	{
 		vars->player.position.x += vars->player.direction.x * vars->player.speed;
-		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.x -= vars->player.direction.x * vars->player.speed;
 		vars->player.position.y += vars->player.direction.y * vars->player.speed;
-		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.y -= vars->player.direction.y * vars->player.speed;
 	}
 	else if (keycode == 0)  // A
 	{
-		vars->player.direction = rotate_vector(vars->player.direction, -PI / 20);
-		vars->player.plane = rotate_vector(vars->player.plane, -PI / 20);
+		vars->player.direction = rotate_vector(vars->player.direction, -vars->player.turn_speed);
+		vars->player.plane = rotate_vector(vars->player.plane, -vars->player.turn_speed);
 	}
 	else if (keycode == 1)  // S
 	{
 		vars->player.position.x -= vars->player.direction.x * vars->player.speed;
-		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.x += vars->player.direction.x * vars->player.speed;
 		vars->player.position.y -= vars->player.direction.y * vars->player.speed;
-		if (vars->map->field[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.y += vars->player.direction.y * vars->player.speed;
 		// printf("pos: %f %f\n", vars->player.position.x, vars->player.position.y);
 	}
 	else if (keycode == 2)  // D
 	{
-		vars->player.direction = rotate_vector(vars->player.direction, PI / 20);
-		vars->player.plane = rotate_vector(vars->player.plane, PI / 20);
+		vars->player.direction = rotate_vector(vars->player.direction, vars->player.turn_speed);
+		vars->player.plane = rotate_vector(vars->player.plane, vars->player.turn_speed);
 	}
 	else if (keycode == 53)
 	{
@@ -78,107 +55,6 @@ int		key_pressed(int keycode, t_vars *vars)
 	return (1); // what is return of this funcion? 
 }
 
-void	draw_line(t_image *image, int x1, int y1, int x2, int y2, int color)
-{
-	t_point	delta;
-	float			ratio;
-	int				x;
-	int				y;
-
-	ratio = 0;
-	delta.x = x2 - x1;
-	delta.y = y2 - y1;
-	if (ft_absi(delta.y) < ft_absi(delta.x))
-	{
-		x = 0;
-		while (x <= ft_absi(delta.x))
-		{
-			ratio = x * 1.0 / ft_absi(delta.x);
-			put_pixel(image, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
-			x++;
-		}
-	}
-	else
-	{
-		y = 0;
-		while (y <= ft_absi(delta.y))
-		{
-			ratio = y * 1.0 / ft_absi(delta.y);
-			put_pixel(image, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), color);
-			y++;
-		}
-	}
-}
-
-void	draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_color color)
-{
-	t_point	delta;
-	float			ratio;
-	int				x;
-	int				y;
-
-	ratio = 0;
-	delta.x = x2 - x1;
-	delta.y = y2 - y1;
-	// if (ft_absi(delta.y) < ft_absi(delta.x))
-	// {
-	// 	x = 0;
-	// 	while (x <= ft_absi(delta.x))
-	// 	{
-	// 		ratio = x * 1.0 / ft_absi(delta.x);
-	// 		put_pixel(image, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
-	// 		x++;
-	// 	}
-	// }
-	if (1)
-	{
-		y = 0;
-		while (y <= ft_absi(delta.y))
-		{
-			ratio = y * 1.0 / ft_absi(delta.y);
-			put_pixel(image, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), dim_color(color, y / 3));
-			y++;
-		}
-	}
-}
-
-void	draw_circle(t_image *image, t_point center, int radius, int color)  // O(n^2)
-{
-	int		x;
-	int		y;
-	
-	put_pixel(image, center.x, center.y, 0x0000FF00);
-	x = -radius;
-	while (x <= radius)
-	{
-		y = -radius;
-		while (y <= radius)
-		{
-			if (x * x + y * y <= radius * radius)
-				put_pixel(image, center.x + x, center.y + y, color);
-			y++;
-		}
-		x++;
-	}
-}
-
-void	draw_square(t_image *image, int x, int y, int radius, int color)
-{
-	int		i;
-	int		j;
-	
-	i = x;
-	while (i <= radius + x)
-	{
-		j = y;
-		while (j <= radius + y)
-		{
-			put_pixel(image, i, j, color);
-			j++;
-		}
-		i++;
-	}
-}
 
 void	draw_map(t_image *image, t_vars *vars)
 {
@@ -187,19 +63,19 @@ void	draw_map(t_image *image, t_vars *vars)
 	int		radius = 20;
 	
 	i = 0;
-	while (i < vars->map->y)
+	while (i < vars->y)
 	{
 		j = 0;
-		while (j < vars->map->x[i])
+		while (j < vars->x[i])
 		{
-			// ft_printf("%s\n", vars->map->field[i]);
-			if (vars->map->field[i][j] == '1')
+			// ft_printf("%s\n", vars->map[i]);
+			if (vars->map[i][j] == '1')
 			{
 				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00FFA700);
 			}
-			// else if (vars->map->field[i][j] == '0')
+			// else if (vars->map[i][j] == '0')
 			// 	draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00000000);
-			else if (ft_strchr("NEWS", vars->map->field[i][j]))
+			else if (ft_strchr("NEWS", vars->map[i][j]))
 			{
 				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x0011FF11);
 			}
@@ -226,17 +102,15 @@ void	cast_rays(t_image *image, t_vars *vars)
 	t_point	side_h;
 	float	i;
 	char	side;
-	
 	int		map_x;
 	int		map_y;
-	
-	i = 0;
 
-	while (i < vars->map->resolution.x)
+	i = 0;
+	while (i < vars->resolution.x)
 	{
-		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / vars->map->resolution.x - 1);
-		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / vars->map->resolution.x - 1);
-		
+		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / vars->resolution.x - 1);
+		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / vars->resolution.x - 1);
+
 		delta_v.x = (ray.x >= 0 ? 1 : -1);
 		delta_h.y = (ray.y >= 0 ? 1 : -1);
 		delta_v.y = (ray.x) ? ray.y / ray.x : 0;
@@ -290,7 +164,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 			{
 				side = (ray.x > 0) ? 'e' : 'w';
 				map_x += step.x;
-				if (vars->map->field[map_y][map_x] == '1')
+				if (vars->map[map_y][map_x] == '1')
 					break;
 				side_v = ft_point_add(side_v, delta_v);
 			}
@@ -299,7 +173,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 			{
 				side = (ray.y > 0) ? 's' : 'n';
 				map_y += step.y;
-				if (vars->map->field[map_y][map_x] == '1')
+				if (vars->map[map_y][map_x] == '1')
 					break;
 				side_h = ft_point_add(side_h, delta_h);
 			}
@@ -337,16 +211,16 @@ void	cast_rays(t_image *image, t_vars *vars)
 		wall_dist_perp = sin_angle * wall_dist;
 		
 
-		int		line_height = (int)(vars->map->resolution.y / wall_dist_perp); // wall_dist_perp;
+		int		line_height = (int)(vars->resolution.y / wall_dist_perp); // wall_dist_perp;
 		int		line_start_y;
 		int		line_end_y;
 		
-		line_start_y = -line_height / 2 + vars->map->resolution.y / 2;
+		line_start_y = -line_height / 2 + vars->resolution.y / 2;
 		if (line_start_y < 0)
 			line_start_y = 0;
-		line_end_y = line_height / 2 + vars->map->resolution.y / 2;
-		if (line_end_y > vars->map->resolution.y)
-			line_end_y = vars->map->resolution.y - 5;
+		line_end_y = line_height / 2 + vars->resolution.y / 2;
+		if (line_end_y > vars->resolution.y)
+			line_end_y = vars->resolution.y - 5;
 		
 		
 		t_color north_color;
@@ -375,45 +249,27 @@ void	cast_rays(t_image *image, t_vars *vars)
 		
 		if (side == 'n')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
 			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(north_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
 		}
 		else if (side == 'e')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
 			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(east_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
 		}
 		else if (side == 'w')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
 			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(west_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
+			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
 		}
 		else if (side == 's')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->map->texture.ceilling);
+			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
 			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(south_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->map->resolution.y, -i, line_end_y, vars->map->texture.floor);
-		}
-		i++;
-	}
-}
-
-void	draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color)
-{
-	int		i;
-	int		j;
-	
-	i = 1;
-	while (i <= x2)
-	{
-		j = y1;
-		while (j <= y2)
-		{
-			put_pixel(image, i, j, color);
-			j++;
+			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
 		}
 		i++;
 	}
@@ -421,32 +277,24 @@ void	draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color)
 
 int		render_next_frame(t_vars *vars)
 {
-	t_image	frame;
 
-	frame.image = mlx_new_image(vars->mlx, vars->map->resolution.x, vars->map->resolution.y); // change name of map-> resolutiodn
-	frame.address = mlx_get_data_addr(frame.image, &frame.bits_per_pixel, &frame.len, &frame.endian);
-
-	cast_rays(&frame, vars);
+	cast_rays(&vars->frame, vars);
 	// draw_map(&image, vars);
 
-	mlx_put_image_to_window(vars->mlx, vars->window, frame.image, 0, 0);
-	// mlx_put_image_to_window(vars->mlx, vars->window, vars->map->texture.north.image, 0, 0);
-	mlx_destroy_image(vars->mlx, frame.image);
-	return (1); // what is return of this funcion? 	
+	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
+	// mlx_destroy_image(vars->mlx, vars->frame.image);
+	return (1); // what is return of this funcion?
 }
 
 t_vars	*default_vars(void)
 {
 	t_vars	*vars;
-	t_map	*map;
 
 	if (!(vars = malloc(sizeof(t_vars))))
 		return (0);
-	if (!(map = malloc(sizeof(t_map))))
-		return (0);
-	map->y = 0;
-	vars->map = map;
+	vars->y = 0;
 	vars->player.speed = 0.15;
+	vars->player.turn_speed = PI / 30;
 	vars->mlx = mlx_init();
 	return (vars);
 }
@@ -455,16 +303,19 @@ int		main(int argc, char **argv)
 {
 	t_vars	*vars;
 
-
 	if (!(vars = default_vars()))
 		return (-1);
 	if (!read_map(argv[1], vars))
 		return (-1);
-	if (!validate_map(vars->map))
+	if (!validate_map(vars))
 		return (-1);
-	ft_putcppn_fd(vars->map->field, vars->map->y, 1);
+	ft_putcppn_fd(vars->map, vars->y, 1);
 
-	vars->window = mlx_new_window(vars->mlx, vars->map->resolution.x, vars->map->resolution.y, "kindow");
+	
+	vars->frame.image = mlx_new_image(vars->mlx, vars->resolution.x, vars->resolution.y);
+	vars->frame.address = mlx_get_data_addr(vars->frame.image, &vars->frame.bits_per_pixel, &vars->frame.len, &vars->frame.endian);
+	
+	vars->window = mlx_new_window(vars->mlx, vars->resolution.x, vars->resolution.y, "kindow");
 	mlx_hook(vars->window, 2, 1L<<0, key_pressed, vars);  // why mask ? 
 	mlx_loop_hook(vars->mlx, render_next_frame, vars);
 	mlx_loop(vars->mlx);

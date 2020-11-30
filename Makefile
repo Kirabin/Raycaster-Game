@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/11/30 13:23:28 by dmilan           ###   ########.fr        #
+#    Updated: 2020/11/30 17:30:48 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,9 @@ SRC_MAP		= \
 SRC			= \
 			$(SRC_MAP) \
 			cub3d.c \
-			color.c
+			color.c \
+			vector.c \
+			draw.c
 
 
 OBJ			= $(SRC:.c=.o)

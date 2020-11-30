@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 16:50:41 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/11/30 17:57:24 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,58 +14,57 @@
 
 
 
-void	parce_resolution(t_map *map, const char *line)
+void	parce_resolution(t_vars *vars, const char *line)
 {
 	int		max_x;
 	int		max_y;
 	
 	line = ft_strskip_char(line, ' ');
-	map->resolution.x = ft_atoi(line);
+	vars->resolution.x = ft_atoi(line);
 	line = ft_strskip_char(ft_strchr(line, ' '), ' ');
-	map->resolution.y = ft_atoi(line);
+	vars->resolution.y = ft_atoi(line);
 }
 
-void	free_map(t_map *map)
-{
-	int		i;
+// void	free_map(t_map *map)
+// {
+// 	int		i;
 
-	i = 0;
-	// free(map->texture.sprite);
-	while (i < map->y)
-		free(map->field[i++]);
-	free(map->x);
-	free(map);
-}
+// 	i = 0;
+// 	// free(map.texture.sprite);
+// 	while (i < map.y)
+// 		free(map[i++]);
+// 	free(map.x);
+// }
 
 
 
 int		parce_map_element(t_vars *vars, char *line)
 {
 	if (*line == 'R')
-		parce_resolution(vars->map, line + 1);
+		parce_resolution(vars, line + 1);
 	else if (*line == 'F')
-		vars->map->texture.floor = parce_color(line + 1);
+		vars->texture.floor = parce_color(line + 1);
 	else if (*line == 'C')
-		vars->map->texture.ceilling = parce_color(line + 1);
+		vars->texture.ceilling = parce_color(line + 1);
 	else if (*line == 'S' && *(line + 1) != 'O')
 	{
-		vars->map->texture.sprite.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 1, ' '), &vars->map->texture.sprite.width, &vars->map->texture.sprite.height);
+		vars->texture.sprite.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 1, ' '), &vars->texture.sprite.width, &vars->texture.sprite.height);
 	}
 	else if (ft_strncmp(line, "NO", 2) == 0)
 	{
-		vars->map->texture.north.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->map->texture.north.width, &vars->map->texture.north.height);
+		vars->texture.north.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.north.width, &vars->texture.north.height);
 	}
 	else if (ft_strncmp(line, "EA", 2) == 0)
 	{
-		vars->map->texture.east.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->map->texture.east.width, &vars->map->texture.east.height);
+		vars->texture.east.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.east.width, &vars->texture.east.height);
 	}
 	else if (ft_strncmp(line, "SO", 2) == 0)
 	{
-		vars->map->texture.south.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->map->texture.south.width, &vars->map->texture.south.height);
+		vars->texture.south.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.south.width, &vars->texture.south.height);
 	}
 	else if (ft_strncmp(line, "WE", 2) == 0)
 	{
-		vars->map->texture.west.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->map->texture.west.width, &vars->map->texture.west.height);
+		vars->texture.west.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.west.width, &vars->texture.west.height);
 	}
 	else if (*line == '\n' || *line == '\0')
 	{
@@ -106,17 +105,16 @@ int		read_map(char *file, t_vars *vars)
 		else
 		{
 			flag = 1;
-			vars->map->y++;
+			vars->y++;
 		}
 		free(line);
 	}
 	free(line);
-	if (!(vars->map->x = malloc(sizeof(int) * vars->map->y)))
+	if (!(vars->x = malloc(sizeof(int) * vars->y)))
 		return (0);
-	if (!(vars->map->field = malloc(sizeof(char*) * vars->map->y)))
+	if (!(vars->map = malloc(sizeof(char*) * vars->y)))
 	{
-		free(vars->map->x);
-		free(vars->map);
+		free(vars->x);
 		return (0);
 	}
 	close(fd);
@@ -134,16 +132,15 @@ int		read_map(char *file, t_vars *vars)
 		else
 		{
 			flag = 1;
-			vars->map->x[i] = ft_strlen(line);
-			if (!(vars->map->field[i] = ft_strdup(line)))
+			vars->x[i] = ft_strlen(line);
+			if (!(vars->map[i] = ft_strdup(line)))
 			{
-				free(vars->map->x);
-				// free allocated vars->map.field;
-				free(vars->map);
+				free(vars->x);
+				// free allocated vars->field;
 				return (0);
 			}
 			j = 0;
-			while (j < vars->map->x[i])  // not effectitve
+			while (j < vars->x[i])  // not effectitve
 			{
 				if (line[j] == 'N')
 				{
