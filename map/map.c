@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 17:57:24 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/02 09:23:53 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,30 @@ int		parce_map_element(t_vars *vars, char *line)
 	else if (*line == 'S' && *(line + 1) != 'O')
 	{
 		vars->texture.sprite.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 1, ' '), &vars->texture.sprite.width, &vars->texture.sprite.height);
+		vars->texture.sprite.address = mlx_get_data_addr(vars->texture.sprite.image, &vars->texture.sprite.bits_per_pixel, &vars->texture.sprite.len, &vars->texture.sprite.endian);
 	}
 	else if (ft_strncmp(line, "NO", 2) == 0)
 	{
 		vars->texture.north.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.north.width, &vars->texture.north.height);
+		vars->texture.north.address = mlx_get_data_addr(vars->texture.north.image, &vars->texture.north.bits_per_pixel, &vars->texture.north.len, &vars->texture.north.endian);		
 	}
 	else if (ft_strncmp(line, "EA", 2) == 0)
 	{
 		vars->texture.east.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.east.width, &vars->texture.east.height);
+		vars->texture.east.address = mlx_get_data_addr(vars->texture.east.image, &vars->texture.east.bits_per_pixel, &vars->texture.east.len, &vars->texture.east.endian);
+		
 	}
 	else if (ft_strncmp(line, "SO", 2) == 0)
 	{
 		vars->texture.south.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.south.width, &vars->texture.south.height);
+		vars->texture.south.address = mlx_get_data_addr(vars->texture.south.image, &vars->texture.south.bits_per_pixel, &vars->texture.south.len, &vars->texture.south.endian);
+		
 	}
 	else if (ft_strncmp(line, "WE", 2) == 0)
 	{
 		vars->texture.west.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.west.width, &vars->texture.west.height);
+		vars->texture.west.address = mlx_get_data_addr(vars->texture.west.image, &vars->texture.west.bits_per_pixel, &vars->texture.west.len, &vars->texture.west.endian);
+		
 	}
 	else if (*line == '\n' || *line == '\0')
 	{

@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 18:24:55 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/02 11:59:20 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ int					validate_map(t_vars *vars);
 t_color				parce_color(const char *line);
 int					dim_color(t_color color, int value);
 int					argb_color(int a, int r, int g, int b);
+void				put_pixel_from_texture(t_image *frame, int x1, int y1, t_image *texture, int x2, int y2);
+
 
 /*
 **  vector.c

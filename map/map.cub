@@ -1,8 +1,8 @@
 R   980     540
-NO     images/n.xpm
-SO   images/s.xpm
-WE images/w.xpm
-EA  images/e.xpm
+NO     images/dirt.xpm
+SO   images/sand.xpm
+WE images/cobblestone.xpm
+EA  images/bedrock.xpm
 
 S images/e.xpm
 F     163, 191, 126

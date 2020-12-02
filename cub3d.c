@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 18:25:07 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/02 14:08:42 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 int		key_pressed(int keycode, t_vars *vars)
 {
 	
-	// ft_printf("%d\n", keycode);
+	ft_printf("%d\n", keycode);
 	if (keycode == 13)  // W
 	{
 		vars->player.position.x += vars->player.direction.x * vars->player.speed;
@@ -26,11 +26,6 @@ int		key_pressed(int keycode, t_vars *vars)
 		vars->player.position.y += vars->player.direction.y * vars->player.speed;
 		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
 			vars->player.position.y -= vars->player.direction.y * vars->player.speed;
-	}
-	else if (keycode == 0)  // A
-	{
-		vars->player.direction = rotate_vector(vars->player.direction, -vars->player.turn_speed);
-		vars->player.plane = rotate_vector(vars->player.plane, -vars->player.turn_speed);
 	}
 	else if (keycode == 1)  // S
 	{
@@ -42,21 +37,46 @@ int		key_pressed(int keycode, t_vars *vars)
 			vars->player.position.y += vars->player.direction.y * vars->player.speed;
 		// printf("pos: %f %f\n", vars->player.position.x, vars->player.position.y);
 	}
+	else if (keycode == 0)  // A
+	{
+		vars->player.position.x += rotate_vector(vars->player.direction, -PI / 2).x * vars->player.speed;
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+			vars->player.position.x -= rotate_vector(vars->player.direction, -PI / 2).x * vars->player.speed;
+		vars->player.position.y += rotate_vector(vars->player.direction, -PI / 2).y * vars->player.speed;
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+			vars->player.position.y -= rotate_vector(vars->player.direction, -PI / 2).y * vars->player.speed;
+	}
 	else if (keycode == 2)  // D
+	{
+		vars->player.position.x += rotate_vector(vars->player.direction, PI / 2).x * vars->player.speed;
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+			vars->player.position.x -= rotate_vector(vars->player.direction, PI / 2).x * vars->player.speed;
+		vars->player.position.y += rotate_vector(vars->player.direction, PI / 2).y * vars->player.speed;
+		if (vars->map[(int)vars->player.position.y][(int)vars->player.position.x] == '1')
+			vars->player.position.y -= rotate_vector(vars->player.direction, PI / 2).y * vars->player.speed;
+	}
+	else if (keycode == 123)  // <-
+	{
+		vars->player.direction = rotate_vector(vars->player.direction, -vars->player.turn_speed);
+		vars->player.plane = rotate_vector(vars->player.plane, -vars->player.turn_speed);
+	}
+	else if (keycode == 124)  // ->
 	{
 		vars->player.direction = rotate_vector(vars->player.direction, vars->player.turn_speed);
 		vars->player.plane = rotate_vector(vars->player.plane, vars->player.turn_speed);
 	}
 	else if (keycode == 53)
 	{
+		mlx_destroy_image(vars->mlx, vars->frame.image);
 		mlx_destroy_window(vars->mlx, vars->window);
 		// free stuff
+		exit(0);
 	}
 	return (1); // what is return of this funcion? 
 }
 
 
-void	draw_map(t_image *image, t_vars *vars)
+void	draw_map(t_vars *vars)
 {
 	int		i;
 	int		j;
@@ -71,13 +91,13 @@ void	draw_map(t_image *image, t_vars *vars)
 			// ft_printf("%s\n", vars->map[i]);
 			if (vars->map[i][j] == '1')
 			{
-				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00FFA700);
+				draw_square(vars->frame.image, j * radius + 1, i * radius + 1, radius - 2, 0x00FFA700);
 			}
 			// else if (vars->map[i][j] == '0')
-			// 	draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x00000000);
+			// 	draw_square(vars->frame.image, j * radius + 1, i * radius + 1, radius - 2, 0x00000000);
 			else if (ft_strchr("NEWS", vars->map[i][j]))
 			{
-				draw_square(image, j * radius + 1, i * radius + 1, radius - 2, 0x0011FF11);
+				draw_square(vars->frame.image, j * radius + 1, i * radius + 1, radius - 2, 0x0011FF11);
 			}
 			
 			j++;
@@ -88,11 +108,11 @@ void	draw_map(t_image *image, t_vars *vars)
 	
 	pos.x = vars->player.position.x * 20;
 	pos.y = vars->player.position.y * 20;
-	draw_circle(image, pos, 5, 0x00E76F51);
+	draw_circle(vars->frame.image, pos, 5, 0x00E76F51);
 }
 
 
-void	cast_rays(t_image *image, t_vars *vars)
+void	cast_rays(t_vars *vars)
 {
 	t_point ray;
 	t_point step;
@@ -106,7 +126,7 @@ void	cast_rays(t_image *image, t_vars *vars)
 	int		map_y;
 
 	i = 0;
-	while (i < vars->resolution.x)
+	while (i <= vars->resolution.x)
 	{
 		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / vars->resolution.x - 1);
 		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / vars->resolution.x - 1);
@@ -200,77 +220,103 @@ void	cast_rays(t_image *image, t_vars *vars)
 		// draw_line(image, (int)from.x, (int)from.y, (int)to.x, (int)to.y, 0x00FFFFFF);
 		
 		
-		float wall_dist;
+		float dist_to_wall;
 		float cos_angle;
 		float sin_angle;
-		float wall_dist_perp;
-		wall_dist = vector_len(wall);
+		float dist_to_wall_perp;
+		dist_to_wall = vector_len(wall);
 		cos_angle = (vars->player.plane.x * wall.x + vars->player.plane.y * wall.y) /
-					(wall_dist * vector_len(vars->player.plane));
+					(dist_to_wall * vector_len(vars->player.plane));
 		sin_angle = sqrt(1 - cos_angle * cos_angle);
-		wall_dist_perp = sin_angle * wall_dist;
+		dist_to_wall_perp = sin_angle * dist_to_wall;
 		
 
-		int		line_height = (int)(vars->resolution.y / wall_dist_perp); // wall_dist_perp;
+		int		wall_height = (int)(vars->resolution.y / dist_to_wall_perp);
 		int		line_start_y;
 		int		line_end_y;
 		
-		line_start_y = -line_height / 2 + vars->resolution.y / 2;
-		if (line_start_y < 0)
-			line_start_y = 0;
-		line_end_y = line_height / 2 + vars->resolution.y / 2;
+		line_start_y = -wall_height / 2 + vars->resolution.y / 2;
+		// if (line_start_y < 0)
+		// 	line_start_y = 0;
+		line_end_y = wall_height / 2 + vars->resolution.y / 2;
 		if (line_end_y > vars->resolution.y)
-			line_end_y = vars->resolution.y - 5;
+			line_end_y = vars->resolution.y;
 		
 		
-		t_color north_color;
-		north_color.r = 0xed; 
-		north_color.g = 0x55;
-		north_color.b = 0x3b;
-		north_color.argb = argb_color(0, north_color.r, north_color.g, north_color.b);
+		// t_color north_color;
+		// north_color.r = 0xed; 
+		// north_color.g = 0x55;
+		// north_color.b = 0x3b;
+		// north_color.argb = argb_color(0, north_color.r, north_color.g, north_color.b);
 		
-		t_color east_color;  //0x00F4A200
-		east_color.r = 0xf6;
-		east_color.g = 0xd5;
-		east_color.b = 0x5c;
-		east_color.argb = argb_color(0, east_color.r, east_color.g, east_color.b);
+		// t_color east_color;
+		// east_color.r = 0xf6;
+		// east_color.g = 0xd5;
+		// east_color.b = 0x5c;
+		// east_color.argb = argb_color(0, east_color.r, east_color.g, east_color.b);
 		
-		t_color west_color;
-		west_color.r = 0x3C;
-		west_color.g = 0xAE;
-		west_color.b = 0xA3;
-		west_color.argb = argb_color(0, west_color.r, west_color.g, west_color.b);
+		// t_color west_color;
+		// west_color.r = 0x3C;
+		// west_color.g = 0xAE;
+		// west_color.b = 0xA3;
+		// west_color.argb = argb_color(0, west_color.r, west_color.g, west_color.b);
 		
-		t_color south_color;
-		south_color.r = 0x20;
-		south_color.g = 0x63;
-		south_color.b = 0x9B;
-		south_color.argb = argb_color(0, south_color.r, south_color.g, south_color.b);
+		// t_color south_color;
+		// south_color.r = 0x20;
+		// south_color.g = 0x63;
+		// south_color.b = 0x9B;
+		// south_color.argb = argb_color(0, south_color.r, south_color.g, south_color.b);
 		
+		int	y;
+		y = (line_start_y < 0) ? 0 : line_start_y;
+		int sprite_y;
+		int sprite_x;
+		draw_line_gradient(&vars->frame, -i, 0, -i, (line_start_y < 0) ? 0 : line_start_y, vars->texture.ceilling);
 		if (side == 'n')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
-			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(north_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
+			while (y < vars->resolution.y && y <= line_end_y)
+			{
+				sprite_y = (y * 1.0 - line_start_y) / wall_height * vars->texture.north.height;
+				sprite_x = (vars->player.position.x + wall.x - (int)(wall.x + vars->player.position.x)) * vars->texture.north.width;
+				put_pixel_from_texture(&vars->frame, -i, y, &vars->texture.north, sprite_x, sprite_y);
+				y++;
+			}
+			// draw_line(&vars->frame.image, -i, line_start_y, -i, line_end_y, dim_color(north_color, dist_to_wall_perp * 8));
 		}
 		else if (side == 'e')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
-			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(east_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
+			// draw_line(vars->frame.image, -i, line_start_y, -i, line_end_y, dim_color(east_color, dist_to_wall_perp * 8));
+			while (y < vars->resolution.y && y <= line_end_y)
+			{
+				sprite_y = (y * 1.0 - line_start_y) / wall_height * vars->texture.east.height;
+				sprite_x = (vars->player.position.y + wall.y - (int)(wall.y + vars->player.position.y)) * vars->texture.east.width;
+				put_pixel_from_texture(&vars->frame, -i, y, &vars->texture.east, sprite_x, sprite_y);
+				y++;
+			}
 		}
 		else if (side == 'w')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
-			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(west_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
+			// draw_line(vars->frame.image, -i, line_start_y, -i, line_end_y, dim_color(west_color, dist_to_wall_perp * 8));
+			while (y < vars->resolution.y && y <= line_end_y)
+			{
+				sprite_y = (y * 1.0 - line_start_y) / wall_height * vars->texture.west.height;
+				sprite_x = (vars->player.position.y + wall.y - (int)(wall.y + vars->player.position.y)) * vars->texture.west.width;
+				put_pixel_from_texture(&vars->frame, -i, y, &vars->texture.west, sprite_x, sprite_y);
+				y++;
+			}
 		}
 		else if (side == 's')
 		{
-			draw_line_gradient(image, -i, 0, -i, line_start_y, vars->texture.ceilling);
-			draw_line(image, -i, line_start_y, -i, line_end_y, dim_color(south_color, wall_dist_perp * 8));
-			draw_line_gradient(image, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
+			// draw_line(vars->frame.image, -i, line_start_y, -i, line_end_y, dim_color(south_color, dist_to_wall_perp * 8));
+			while (y < vars->resolution.y && y <= line_end_y)
+			{
+				sprite_y = (y * 1.0 - line_start_y) / wall_height * vars->texture.south.height;
+				sprite_x = (vars->player.position.x + wall.x - (int)(wall.x + vars->player.position.x)) * vars->texture.south.width;
+				put_pixel_from_texture(&vars->frame, -i, y, &vars->texture.south, sprite_x, sprite_y);
+				y++;
+			}
 		}
+		draw_line_gradient(&vars->frame, -i, vars->resolution.y, -i, line_end_y, vars->texture.floor);
 		i++;
 	}
 }
@@ -278,8 +324,8 @@ void	cast_rays(t_image *image, t_vars *vars)
 int		render_next_frame(t_vars *vars)
 {
 
-	cast_rays(&vars->frame, vars);
-	// draw_map(&image, vars);
+	cast_rays(vars);
+	// draw_map(vars);
 
 	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
 	// mlx_destroy_image(vars->mlx, vars->frame.image);
@@ -303,9 +349,14 @@ int		main(int argc, char **argv)
 {
 	t_vars	*vars;
 
+	if (ft_strncmp(argv[1], "--save", 6) == 0)
+	{
+		return (0);
+		// render and save image in bmp format.
+	}
 	if (!(vars = default_vars()))
 		return (-1);
-	if (!read_map(argv[1], vars))
+	if (!read_map("map/map.cub", vars))
 		return (-1);
 	if (!validate_map(vars))
 		return (-1);
