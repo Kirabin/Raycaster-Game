@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 13:20:44 by dmilan            #+#    #+#             */
-/*   Updated: 2020/11/30 13:52:32 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/03 08:41:42 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,3 @@ int		dim_color(t_color color, int value)
 	
 	return (new_color.argb);
 }
-
-// t_color	argb_to_color(int	argb)
-// {
-	
-// }

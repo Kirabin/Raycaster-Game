@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:30:10 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/02 12:20:06 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/03 08:41:09 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,16 @@ void	put_pixel(t_image *image, int x, int y, int color)
 {
 	char	*dst;
 	
-	dst = image->address + (y * image->len + x * (image->bits_per_pixel / 8));  // why offset;
+	dst = image->address + (y * image->len + x * (image->bits_per_pixel / 8));
 	*(unsigned int *)dst = color;
+}
+
+int		get_pixel(t_image *image, int x, int y)
+{
+	char	*dst;
+	
+	dst = image->address + (y * image->len + x * (image->bits_per_pixel / 8));
+	return (*(unsigned int *)dst);
 }
 
 void	put_pixel_from_texture(t_image *frame, int x1, int y1, t_image *texture, int x2, int y2)

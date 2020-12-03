@@ -6,13 +6,11 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/02 09:23:53 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/03 16:43:30 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
-
 
 void	parce_resolution(t_vars *vars, const char *line)
 {
@@ -36,8 +34,6 @@ void	parce_resolution(t_vars *vars, const char *line)
 // 	free(map.x);
 // }
 
-
-
 int		parce_map_element(t_vars *vars, char *line)
 {
 	if (*line == 'R')
@@ -60,24 +56,19 @@ int		parce_map_element(t_vars *vars, char *line)
 	{
 		vars->texture.east.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.east.width, &vars->texture.east.height);
 		vars->texture.east.address = mlx_get_data_addr(vars->texture.east.image, &vars->texture.east.bits_per_pixel, &vars->texture.east.len, &vars->texture.east.endian);
-		
 	}
 	else if (ft_strncmp(line, "SO", 2) == 0)
 	{
 		vars->texture.south.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.south.width, &vars->texture.south.height);
 		vars->texture.south.address = mlx_get_data_addr(vars->texture.south.image, &vars->texture.south.bits_per_pixel, &vars->texture.south.len, &vars->texture.south.endian);
-		
 	}
 	else if (ft_strncmp(line, "WE", 2) == 0)
 	{
 		vars->texture.west.image = mlx_xpm_file_to_image(vars->mlx, (char *)ft_strskip_char(line + 2, ' '), &vars->texture.west.width, &vars->texture.west.height);
 		vars->texture.west.address = mlx_get_data_addr(vars->texture.west.image, &vars->texture.west.bits_per_pixel, &vars->texture.west.len, &vars->texture.west.endian);
-		
 	}
 	else if (*line == '\n' || *line == '\0')
-	{
 		;
-	}
 	else
 		return (0);
 	return (1);
@@ -154,8 +145,8 @@ int		read_map(char *file, t_vars *vars)
 				{
 					vars->player.direction.x = 0;
 					vars->player.direction.y = -1;
-					vars->player.position.x = j + 0.5;
-					vars->player.position.y = i + 0.5;
+					vars->player.pos.x = j + 0.5;
+					vars->player.pos.y = i + 0.5;
 					vars->player.plane.x = -0.66;
 					vars->player.plane.y = 0;
 				}
@@ -163,8 +154,8 @@ int		read_map(char *file, t_vars *vars)
 				{
 					vars->player.direction.x = 1;
 					vars->player.direction.y = 0;
-					vars->player.position.x = j + 0.5;
-					vars->player.position.y = i + 0.5;
+					vars->player.pos.x = j + 0.5;
+					vars->player.pos.y = i + 0.5;
 					vars->player.plane.x = 0;
 					vars->player.plane.y = -0.66;
 				}
@@ -172,8 +163,8 @@ int		read_map(char *file, t_vars *vars)
 				{
 					vars->player.direction.x = -1;
 					vars->player.direction.y = 0;
-					vars->player.position.x = j + 0.5;
-					vars->player.position.y = i + 0.5;
+					vars->player.pos.x = j + 0.5;
+					vars->player.pos.y = i + 0.5;
 					vars->player.plane.x = 0;
 					vars->player.plane.y = 0.66;
 				}
@@ -181,8 +172,8 @@ int		read_map(char *file, t_vars *vars)
 				{
 					vars->player.direction.x = 0;
 					vars->player.direction.y = 1;
-					vars->player.position.x = j + 0.5;
-					vars->player.position.y = i + 0.5;
+					vars->player.pos.x = j + 0.5;
+					vars->player.pos.y = i + 0.5;
 					vars->player.plane.x = 0.66;
 					vars->player.plane.y = 0;
 				}
