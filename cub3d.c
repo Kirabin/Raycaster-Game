@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/03 17:33:05 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/05 18:44:25 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,13 +130,18 @@ void	calc_side(t_ray *ray, t_vars *vars)
 }
 
 void	cast_ray(t_ray *ray, t_vars *vars)
-{
+{	
+	ray->sprites = 0;
 	while (1)
 	{
 		if (ray->x && vector_len(ray->side_v) < vector_len(ray->side_h))
 		{
 			ray->side = (ray->x > 0) ? 'e' : 'w';
 			ray->map_x += (ray->x >= 0) ? 1 : -1;
+			if (vars->map[ray->map_y][ray->map_x] == '2')
+			{
+				ray->sprites++;
+			}
 			if (vars->map[ray->map_y][ray->map_x] == '1')
 				break;
 			ray->side_v = ft_point_add(ray->side_v, ray->delta_v);
@@ -145,6 +150,10 @@ void	cast_ray(t_ray *ray, t_vars *vars)
 		{
 			ray->side = (ray->y > 0) ? 's' : 'n';
 			ray->map_y += (ray->y >= 0) ? 1 : -1;
+			if (vars->map[ray->map_y][ray->map_x] == '2')
+			{
+				ray->sprites++;
+			}
 			if (vars->map[ray->map_y][ray->map_x] == '1')
 				break;
 			ray->side_h = ft_point_add(ray->side_h, ray->delta_h);
@@ -169,21 +178,46 @@ void	calc_wall(t_ray *ray, t_vars *vars)
 		ray->wall_end = vars->resolution.y;
 }
 
+void	draw_sprites(t_ray *ray, t_vars *vars, int i)
+{
+	int		y;
+	int		color;
+	
+	int		sprite_start;
+	int		sprite_end;
+	t_point	sprite;
+	double	determinant;
+	double	transform_x;
+	double	transform_y;
+
+	// sprite_x = ;
+	// sprite_y = ;
+	determinant = 1.0 / (vars->player.plane.x * vars->player.direction.y - vars->player.plane.y * vars->player.direction.x);
+	transform_x = determinant * (vars->player.direction.y * sprite.x - vars->player.direction.x * sprite.y);
+	transform_y = determinant * (-vars->player.plane.y * sprite.x + vars->player.plane.x * sprite.y);
+
+	y = (sprite_start < 0) ? 0 : sprite_start;
+	while (y < vars->resolution.y && y <= sprite_end)
+	{
+		color = 0xFF00FF; // calculates color using sprite_x and sprite_y;
+		if (color != SPRITE_BG)
+			put_pixel(&vars->frame, -i, y, color);
+		y++;
+	}
+	
+	
+}
+
 int		calc_texture_color(t_ray *ray, t_vars *vars, t_image texture, int y)
 {
 	int sprite_y;
 	int sprite_x;
 
 	sprite_y = (y * 1.0 - ray->wall_start) / ray->wall_height * texture.height;
-	if (ray->side == 'w' || ray->side == 'e') {
+	if (ray->side == 'w' || ray->side == 'e')
 		sprite_x = (vars->player.pos.y + ray->wall.y - (int)(ray->wall.y + vars->player.pos.y)) * texture.width;
-	}
 	else
-	{
 		sprite_x = (vars->player.pos.x + ray->wall.x - (int)(ray->wall.x + vars->player.pos.x)) * texture.width;
-	}
-	
-	
 	return (get_pixel(&texture, sprite_x, sprite_y));
 }
 
@@ -231,10 +265,14 @@ void	cast_rays(t_vars *vars)
 	}
 }
 
+
+
 int		render_next_frame(t_vars *vars)
 {
 	cast_rays(vars);
+	// cast_rays_sprite(vars);
 	// draw_map(vars);
+	// draw_sprites(vars);
 	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
 	return (1); // what is return of this funcion?
 }
@@ -263,7 +301,7 @@ int		main(int argc, char **argv)
 	}
 	if (!(vars = default_vars()))
 		return (-1);
-	if (!read_map("map/map1.cub", vars))
+	if (!read_map("map/map.cub", vars))
 		return (-1);
 	if (!validate_map(vars))
 		return (-1);

@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/03 16:25:51 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/05 18:44:06 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # define LEFT_ARROW 123
 # define RIGHT_ARROW 124
 # define ESC 53
-
+# define SPRITE_BG 0x00f6f6f6
 
 typedef struct		s_color
 {
@@ -37,10 +37,10 @@ typedef struct		s_color
 typedef struct		s_image
 {
 	void			*image;
-	char			*address; // ?
+	char			*address;
 	int				bits_per_pixel;
 	int				len;
-	int				endian; // ?
+	int				endian;
 	int				width;
 	int				height;
 	
@@ -81,6 +81,7 @@ typedef struct		s_ray
 	char			side;
 	int				map_x;
 	int				map_y;
+	int				sprites;
 }					t_ray;
 
 typedef struct		s_vars
@@ -125,6 +126,17 @@ void				draw_square(t_image *image, int x, int y, int radius, int color);
 void				draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color);
 void				draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_color color);
 
+/*
+**  parce.c
+*/
+void				parce_resolution(t_vars *vars, const char *line);
+void				new_texture(t_vars *vars, t_image *texture, const char *line);
+int					parce_map_element(t_vars *vars, char *line);
+
+/*
+**  validate_map.c
+*/
+int					check_cub_extension(char *line);
 
 
 #endif

@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/11/30 17:30:48 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/05 10:46:49 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,8 @@ INC_DIRS	= -Iminilibx -I. -Ilibft
 
 SRC_MAP		= \
 			map/map.c \
-			map/validate_map.c
+			map/validate_map.c \
+			map/parce.c
 
 SRC			= \
 			$(SRC_MAP) \

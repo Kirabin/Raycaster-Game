@@ -6,13 +6,13 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 13:20:44 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/03 08:41:42 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/05 10:27:26 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int		argb_color(int a, int r, int g, int b)
+int			argb_color(int a, int r, int g, int b)
 {
 	return(a << 24 | r << 16 | g << 8 | b);
 }
@@ -35,7 +35,7 @@ t_color		parce_color(const char *line)
 }
 
 
-int		dim_color(t_color color, int value)
+int			dim_color(t_color color, int value)
 {
 	t_color new_color;
 	
