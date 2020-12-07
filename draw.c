@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:30:10 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/03 08:41:09 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/07 19:49:13 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,32 +41,34 @@ void	put_pixel_from_texture(t_image *frame, int x1, int y1, t_image *texture, in
 
 void	draw_line(t_image *frame, int x1, int y1, int x2, int y2, int color)
 {
-	t_point	delta;
-	float			ratio;
-	int				x;
-	int				y;
+	t_point		delta;
+	t_point		pixel;
+	float		ratio;
+	int			x;
+	int			y;
 
-	ratio = 0;
 	delta.x = x2 - x1;
 	delta.y = y2 - y1;
-	if (ft_absi(delta.y) < ft_absi(delta.x))
+	if (ft_abs(delta.y) < ft_abs(delta.x))
 	{
-		x = 0;
-		while (x <= ft_absi(delta.x))
+		x = -1;
+		while (++x <= ft_abs(delta.x))
 		{
-			ratio = x * 1.0 / ft_absi(delta.x);
-			put_pixel(frame, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), color);
-			x++;
+			ratio = x * 1.0 / ft_abs(delta.x);
+			pixel.x = x1 + x * (delta.x > 0 ? 1 : -1);
+			pixel.y = y1 + ratio * ft_abs(delta.y) * (delta.y > 0 ? 1 : -1);
+			put_pixel(frame, (int)pixel.x, (int)pixel.y, color);
 		}
 	}
 	else
 	{
-		y = 0;
-		while (y <= ft_absi(delta.y))
+		y = -1;
+		while (++y <= ft_abs(delta.y))
 		{
-			ratio = y * 1.0 / ft_absi(delta.y);
-			put_pixel(frame, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), color);
-			y++;
+			ratio = y * 1.0 / ft_abs(delta.y);
+			pixel.x = x1 + ratio * ft_abs(delta.x) * (delta.x > 0 ? 1 : -1);
+			pixel.y = y1 + y * (delta.y > 0 ? 1 : -1);
+			put_pixel(frame, (int)pixel.x, (int)pixel.y, color);
 		}
 	}
 }
@@ -113,47 +115,11 @@ void	draw_rectangle(t_image *frame, int x1, int y1, int x2, int y2, int color)
 	int		i;
 	int		j;
 	
-	i = 1;
-	while (i <= x2)
+	i = ft_min(x1, x2) - 1;
+	while (++i <= ft_max(x1, x2))
 	{
-		j = y1;
-		while (j <= y2)
-		{
+		j = ft_min(y1, y2) - 1;
+		while (++j <= ft_max(y1, y2))
 			put_pixel(frame, i, j, color);
-			j++;
-		}
-		i++;
-	}
-}
-
-void	draw_line_gradient(t_image *frame, int x1, int y1, int x2, int y2, t_color color)
-{
-	t_point	delta;
-	float			ratio;
-	int				x;
-	int				y;
-
-	ratio = 0;
-	delta.x = x2 - x1;
-	delta.y = y2 - y1;
-	if (ft_absi(delta.y) < ft_absi(delta.x))
-	{
-		x = 0;
-		while (x <= ft_absi(delta.x))
-		{
-			ratio = x * 1.0 / ft_absi(delta.x);
-			put_pixel(frame, x1 + x * (delta.x > 0 ? 1 : -1), y1 + ratio * ft_absi(delta.y) * (delta.y > 0 ? 1 : -1), dim_color(color, y / 3));
-			x++;
-		}
-	}
-	if (1)
-	{
-		y = 0;
-		while (y <= ft_absi(delta.y))
-		{
-			ratio = y * 1.0 / ft_absi(delta.y);
-			put_pixel(frame, x1 + ratio * ft_absi(delta.x) * (delta.x > 0 ? 1 : -1), y1 + y * (delta.y > 0 ? 1 : -1), dim_color(color, y / 3));
-			y++;
-		}
 	}
 }

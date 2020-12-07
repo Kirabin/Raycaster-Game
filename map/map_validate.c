@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validate_map.c                                     :+:      :+:    :+:   */
+/*   map_validate.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 13:25:18 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/05 10:52:53 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/07 19:19:36 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int		check_cub_extension(char *line)
 	return (0);
 }
 
-int		validate_map(t_vars *vars)
+int		map_validate(t_vars *vars)
 {
+	
 	return (1);
 }

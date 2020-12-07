@@ -6,16 +6,14 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/05 18:44:06 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/07 18:57:23 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 # include "libft/libft.h"
-# include <math.h>
 # include <mlx.h>
-# define PI 3.14159265359
 # define W 13
 # define A 0
 # define S 1
@@ -24,15 +22,6 @@
 # define RIGHT_ARROW 124
 # define ESC 53
 # define SPRITE_BG 0x00f6f6f6
-
-typedef struct		s_color
-{
-	int				a;
-	int				r;
-	int				g;
-	int				b;
-	int				argb;
-}					t_color;
 
 typedef struct		s_image
 {
@@ -43,7 +32,6 @@ typedef struct		s_image
 	int				endian;
 	int				width;
 	int				height;
-	
 }					t_image;
 
 typedef struct		s_texture
@@ -95,19 +83,20 @@ typedef struct		s_vars
 	int				y;
 	int				*x;
 	t_texture		texture;
+	t_list			*sprites;
 }					t_vars;
 
-int					read_map(char *file, t_vars *vars);
-int					validate_map(t_vars *vars);
+void				read_map(char *file, t_vars *vars);
+int					map_validate(t_vars *vars);
+void				handle_error(const char *error);
 
 /*
 **  color.c
 */
-t_color				parce_color(const char *line);
+t_color				parce_color_line(const char *line);
 int					dim_color(t_color color, int value);
-int					argb_color(int a, int r, int g, int b);
-// void				put_pixel_from_texture(t_image *frame, int x1, int y1, t_image *texture, int x2, int y2);
-
+int					argb_color(unsigned char a, unsigned char r,
+								unsigned char g, unsigned char b);
 
 /*
 **  vector.c
@@ -132,6 +121,7 @@ void				draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_col
 void				parce_resolution(t_vars *vars, const char *line);
 void				new_texture(t_vars *vars, t_image *texture, const char *line);
 int					parce_map_element(t_vars *vars, char *line);
+int					is_map_element(char *line);
 
 /*
 **  validate_map.c

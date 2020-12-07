@@ -6,43 +6,39 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/05 10:46:49 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/07 19:53:51 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= cub3D
-FLAGS		= #-Wall -Wextra -Werror
-MLX			= minilibx
+FLAGS		= -Wall -Wextra #-Werror
 LIB			= libft/libft.a
-INC_DIRS	= -Iminilibx -I. -Ilibft
 
 SRC_MAP		= \
-			map/map.c \
-			map/validate_map.c \
-			map/parce.c
+				map.c \
+				map_validate.c \
+				map_parce.c
 
 SRC			= \
-			$(SRC_MAP) \
-			cub3d.c \
-			color.c \
-			vector.c \
-			draw.c
+				$(addprefix map/, $(SRC_MAP)) \
+				cub3d.c \
+				draw.c
 
 
 OBJ			= $(SRC:.c=.o)
-INC			= cub3d.h
+INC_DIRS	=  -I. -I./libft -I./mlx_opengl
+HEADERS		= cub3d.h libft/libft.h
 
 all: $(NAME)
 
 $(LIB):
 	make -C libft
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	 gcc $(FLAGS) $(INC_DIRS) -c $< -o $@
 
 $(NAME): $(LIB) $(OBJ) $(INC)
-	gcc -g $(FLAGS) $(SRC) libft/libft.a -Lminilibx -lmlx -framework OpenGL -framework AppKit -o $(NAME) -I.  # remove SRC and -g
-	
+	gcc -g $(FLAGS) $(SRC) libft/libft.a -framework OpenGL -framework AppKit -o $(NAME) $(INC_DIRS) -Lminilibx -lmlx  #remove SRC and -g
 
 clean:
 	make clean -C libft

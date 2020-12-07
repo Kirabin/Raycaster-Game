@@ -6,30 +6,42 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/05 18:48:45 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/07 19:17:52 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+int			dim_color(t_color color, int value)
+{
+	t_color new_color;
+	
+	new_color.r = (value > color.r) ? 0 : color.r - value;
+	new_color.g = (value > color.g) ? 0 : color.g - value;
+	new_color.b = (value > color.b) ? 0 : color.b - value;
+	new_color.argb = ft_color_argb(0, new_color.r, new_color.g, new_color.b);
+	
+	return (new_color.argb);
+}
+
 void	move(t_vars *vars, double rotation)
 {
-	vars->player.pos.x += rotate_vector(vars->player.direction, rotation).x
+	vars->player.pos.x += ft_point_rotate(vars->player.direction, rotation).x
 						* vars->player.speed;
 	if (vars->map[(int)vars->player.pos.y][(int)vars->player.pos.x] == '1')
-		vars->player.pos.x -= rotate_vector(vars->player.direction, rotation).x
+		vars->player.pos.x -= ft_point_rotate(vars->player.direction, rotation).x
 							* vars->player.speed;
-	vars->player.pos.y += rotate_vector(vars->player.direction, rotation).y
+	vars->player.pos.y += ft_point_rotate(vars->player.direction, rotation).y
 						* vars->player.speed;
 	if (vars->map[(int)vars->player.pos.y][(int)vars->player.pos.x] == '1')
-		vars->player.pos.y -= rotate_vector(vars->player.direction, rotation).y
+		vars->player.pos.y -= ft_point_rotate(vars->player.direction, rotation).y
 							* vars->player.speed;
 }
 
 void	rotate(t_vars *vars, double rotation)
 {
-	vars->player.direction = rotate_vector(vars->player.direction, rotation);
-	vars->player.plane = rotate_vector(vars->player.plane, rotation);
+	vars->player.direction = ft_point_rotate(vars->player.direction, rotation);
+	vars->player.plane = ft_point_rotate(vars->player.plane, rotation);
 }
 
 int		key_pressed(int keycode, t_vars *vars)
@@ -134,7 +146,7 @@ void	cast_ray(t_ray *ray, t_vars *vars)
 	ray->sprites = 0;
 	while (1)
 	{
-		if (ray->x && vector_len(ray->side_v) < vector_len(ray->side_h))
+		if (ray->x && ft_point_len(ray->side_v) < ft_point_len(ray->side_h))
 		{
 			ray->side = (ray->x > 0) ? 'e' : 'w';
 			ray->map_x += (ray->x >= 0) ? 1 : -1;
@@ -169,8 +181,8 @@ void	calc_wall(t_ray *ray, t_vars *vars)
 	ray->wall.x = (ray->side == 'w' || ray->side == 'e') ? ray->side_v.x : ray->side_h.x;
 	ray->wall.y = (ray->side == 'w' || ray->side == 'e') ? ray->side_v.y : ray->side_h.y;
 	cos_angle = (vars->player.plane.x * ray->wall.x + vars->player.plane.y * ray->wall.y) /
-				(vector_len(ray->wall) * vector_len(vars->player.plane));
-	dist_to_wall_perp = sqrt(1 - cos_angle * cos_angle) * vector_len(ray->wall);
+				(ft_point_len(ray->wall) * ft_point_len(vars->player.plane));
+	dist_to_wall_perp = sqrt(1 - cos_angle * cos_angle) * ft_point_len(ray->wall);
 	ray->wall_height = vars->resolution.y / dist_to_wall_perp;
 	ray->wall_start = -ray->wall_height / 2 + vars->resolution.y / 2;
 	ray->wall_end = ray->wall_height / 2 + vars->resolution.y / 2;
@@ -178,35 +190,35 @@ void	calc_wall(t_ray *ray, t_vars *vars)
 		ray->wall_end = vars->resolution.y;
 }
 
-void	draw_sprites(t_ray *ray, t_vars *vars, int i)
-{
-	int		y;
-	int		color;
+// void	draw_sprites(t_ray *ray, t_vars *vars, int i)
+// {
+// 	int		y;
+// 	int		color;
 	
-	int		sprite_start;
-	int		sprite_end;
-	t_point	sprite;
-	double	determinant;
-	double	transform_x;
-	double	transform_y;
+// 	int		sprite_start;
+// 	int		sprite_end;
+// 	t_point	sprite;
+// 	double	determinant;
+// 	double	transform_x;
+// 	double	transform_y;
 
-	// sprite_x = ;
-	// sprite_y = ;
-	determinant = 1.0 / (vars->player.plane.x * vars->player.direction.y - vars->player.plane.y * vars->player.direction.x);
-	transform_x = determinant * (vars->player.direction.y * sprite.x - vars->player.direction.x * sprite.y);
-	transform_y = determinant * (-vars->player.plane.y * sprite.x + vars->player.plane.x * sprite.y);
+// 	// sprite_x = ;
+// 	// sprite_y = ;
+// 	determinant = 1.0 / (vars->player.plane.x * vars->player.direction.y - vars->player.plane.y * vars->player.direction.x);
+// 	transform_x = determinant * (vars->player.direction.y * sprite.x - vars->player.direction.x * sprite.y);
+// 	transform_y = determinant * (-vars->player.plane.y * sprite.x + vars->player.plane.x * sprite.y);
 
-	y = (sprite_start < 0) ? 0 : sprite_start;
-	while (y < vars->resolution.y && y <= sprite_end)
-	{
-		color = 0xFF00FF; // calculates color using sprite_x and sprite_y;
-		if (color != SPRITE_BG)
-			put_pixel(&vars->frame, -i, y, color);
-		y++;
-	}
+// 	y = (sprite_start < 0) ? 0 : sprite_start;
+// 	while (y < vars->resolution.y && y <= sprite_end)
+// 	{
+// 		color = 0xFF00FF; // calculates color using sprite_x and sprite_y;
+// 		if (color != SPRITE_BG)
+// 			put_pixel(&vars->frame, -i, y, color);
+// 		y++;
+// 	}
 	
 	
-}
+// }
 
 int		calc_texture_color(t_ray *ray, t_vars *vars, t_image texture, int y)
 {
@@ -269,12 +281,16 @@ void	cast_rays(t_vars *vars)
 
 int		render_next_frame(t_vars *vars)
 {
+	// int x, y;
+	
+	// mlx_get_screen_size(vars->mlx, &x, &y);
+	// ft_printf("%d %d\n", x, y);
+	ft_lstclear(&vars->sprites, free);
 	cast_rays(vars);
-	// cast_rays_sprite(vars);
 	// draw_map(vars);
 	// draw_sprites(vars);
 	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
-	return (1); // what is return of this funcion?
+	return (1);
 }
 
 t_vars	*default_vars(void)
@@ -282,34 +298,50 @@ t_vars	*default_vars(void)
 	t_vars	*vars;
 
 	if (!(vars = malloc(sizeof(t_vars))))
-		return (0);
+		handle_error("Error: malloc couldn't allocate space\n");
 	vars->y = 0;
 	vars->player.speed = 0.15;
 	vars->player.turn_speed = PI / 30;
 	vars->mlx = mlx_init();
+	vars->sprites = NULL;
 	return (vars);
+}
+
+void	handle_error(const char *error)
+{
+	ft_putstr_fd((char *)error, STD_IN);
+	exit(0);  // EXIT_FAILURE
+}
+
+t_image	new_frame(t_vars *vars)
+{
+	t_image frame;
+	
+	frame.image = 
+	frame.image = mlx_new_image(vars->mlx, vars->resolution.x,
+											vars->resolution.y);
+	frame.address = mlx_get_data_addr(frame.image, &frame.bits_per_pixel,
+													&frame.len,
+													&frame.endian);
+	return (frame);
 }
 
 int		main(int argc, char **argv)
 {
 	t_vars	*vars;
 
+	argc+=0;
 	if (ft_strncmp(argv[1], "--save", 6) == 0)
 	{
-		return (0);
 		// render and save image in bmp format.
 	}
-	if (!(vars = default_vars()))
-		return (-1);
-	if (!read_map("map/map.cub", vars))
-		return (-1);
-	if (!validate_map(vars))
-		return (-1);
-	ft_putcppn_fd(vars->map, vars->y, 1);
+	vars = default_vars();
+	read_map("levels/default.cub", vars);
+	// ft_putcppn_fd(vars->map, vars->y, 1);
 
-	vars->frame.image = mlx_new_image(vars->mlx, vars->resolution.x, vars->resolution.y);
-	vars->frame.address = mlx_get_data_addr(vars->frame.image, &vars->frame.bits_per_pixel, &vars->frame.len, &vars->frame.endian);
-	vars->window = mlx_new_window(vars->mlx, vars->resolution.x, vars->resolution.y, "kindow");
+	vars->frame = new_frame(vars);
+	vars->window = mlx_new_window(vars->mlx, vars->resolution.x, 
+									vars->resolution.y, "cubcraft");
 	mlx_hook(vars->window, 2, 1L << 0, key_pressed, vars);  // why mask ?
 	mlx_loop_hook(vars->mlx, render_next_frame, vars);
 	mlx_loop(vars->mlx);
