@@ -4,4 +4,5 @@
 *.dSYM
 *.o
 *.a
+*.dylib
 cub3D

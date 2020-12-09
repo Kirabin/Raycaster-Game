@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/07 19:17:52 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/09 10:02:02 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,8 +186,8 @@ void	calc_wall(t_ray *ray, t_vars *vars)
 	ray->wall_height = vars->resolution.y / dist_to_wall_perp;
 	ray->wall_start = -ray->wall_height / 2 + vars->resolution.y / 2;
 	ray->wall_end = ray->wall_height / 2 + vars->resolution.y / 2;
-	if (ray->wall_end > vars->resolution.y)
-		ray->wall_end = vars->resolution.y;
+	if (ray->wall_end >= vars->resolution.y)
+		ray->wall_end = vars->resolution.y - 1;
 }
 
 // void	draw_sprites(t_ray *ray, t_vars *vars, int i)
@@ -238,20 +238,20 @@ void	draw_wall(t_ray *ray, t_vars *vars, int i)
 	int	y;
 		
 	y = (ray->wall_start < 0) ? 0 : ray->wall_start;
-	draw_line(&vars->frame, -i, 0, -i, (ray->wall_start < 0) ? 0 : ray->wall_start, vars->texture.ceilling.argb);
+	draw_line(&vars->frame, vars->resolution.x - i - 1, 0, vars->resolution.x - i - 1, (ray->wall_start < 0) ? 0 : ray->wall_start, vars->texture.ceilling.argb);
 	while (y < vars->resolution.y && y <= ray->wall_end)
 	{
 		if (ray->side == 'n')
-			put_pixel(&vars->frame, -i, y, calc_texture_color(ray, vars, vars->texture.north, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.north, y));
 		else if (ray->side == 'e')
-			put_pixel(&vars->frame, -i, y, calc_texture_color(ray, vars, vars->texture.east, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.east, y));
 		else if (ray->side == 'w')
-			put_pixel(&vars->frame, -i, y, calc_texture_color(ray, vars, vars->texture.west, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.west, y));
 		else if (ray->side == 's')
-			put_pixel(&vars->frame, -i, y, calc_texture_color(ray, vars, vars->texture.south, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.south, y));
 		y++;
 	}
-	draw_line(&vars->frame, -i, vars->resolution.y, -i, ray->wall_end, vars->texture.floor.argb);
+	draw_line(&vars->frame, vars->resolution.x - i - 1, vars->resolution.y - 1, vars->resolution.x - i - 1, ray->wall_end, vars->texture.floor.argb);
 }
 
 void	cast_rays(t_vars *vars)
@@ -260,7 +260,7 @@ void	cast_rays(t_vars *vars)
 	int			i;
 
 	i = -1;
-	while (++i <= vars->resolution.x)
+	while (++i < vars->resolution.x)
 	{
 		ray.map_x = (int)vars->player.pos.x;
 		ray.map_y = (int)vars->player.pos.y;
@@ -281,10 +281,6 @@ void	cast_rays(t_vars *vars)
 
 int		render_next_frame(t_vars *vars)
 {
-	// int x, y;
-	
-	// mlx_get_screen_size(vars->mlx, &x, &y);
-	// ft_printf("%d %d\n", x, y);
 	ft_lstclear(&vars->sprites, free);
 	cast_rays(vars);
 	// draw_map(vars);
@@ -330,8 +326,7 @@ int		main(int argc, char **argv)
 {
 	t_vars	*vars;
 
-	argc+=0;
-	if (ft_strncmp(argv[1], "--save", 6) == 0)
+	if (argc == 2 && ft_strncmp(argv[1], "--save", 6) == 0)
 	{
 		// render and save image in bmp format.
 	}
@@ -343,6 +338,7 @@ int		main(int argc, char **argv)
 	vars->window = mlx_new_window(vars->mlx, vars->resolution.x, 
 									vars->resolution.y, "cubcraft");
 	mlx_hook(vars->window, 2, 1L << 0, key_pressed, vars);  // why mask ?
+	// mlx_hook(fractol.mlx.win, 17, 1L << 17, clean_exit, &fractol);
 	mlx_loop_hook(vars->mlx, render_next_frame, vars);
 	mlx_loop(vars->mlx);
 	return (0);
