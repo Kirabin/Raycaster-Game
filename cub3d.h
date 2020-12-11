@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 14:09:51 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 18:14:06 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define LEFT_ARROW 123
 # define RIGHT_ARROW 124
 # define ESC 53
+# define SPRITE_BG 0x00B59696
 
 typedef struct		s_image
 {
@@ -69,7 +70,6 @@ typedef struct		s_ray
 	char			side;
 	int				map_x;
 	int				map_y;
-	int				sprites;
 }					t_ray;
 
 typedef struct		s_content
@@ -78,6 +78,16 @@ typedef struct		s_content
 	int				y;
 	bool			is_shown;
 	t_point			contact;
+	t_point			transform;
+	int				screen_x;
+	int				height;
+	int				start_y;
+	int				end_y;
+	int				width;
+	int				start_x;
+	int				end_x;
+	int				tex_x;
+	int				tex_y;
 }					t_content;
 
 typedef struct		s_vars
@@ -93,6 +103,7 @@ typedef struct		s_vars
 	t_texture		texture;
 	t_list			*sprites;
 	double			*rays;
+	char			*arg;
 }					t_vars;
 
 typedef struct		s_elements
@@ -111,6 +122,10 @@ void				read_map(char *file, t_vars *vars);
 int					map_validate(t_vars *vars);
 void				handle_error(const char *error);
 void				put_content(void *content);
+void				draw_sprites(t_vars *vars);
+void				draw_wall(t_ray *ray, t_vars *vars, int i);
+void				check_for_sprite(t_ray *ray, t_vars *vars);
+void				cast_ray(t_ray *ray, t_vars *vars);
 
 /*
 **  vector.c
@@ -125,10 +140,6 @@ void				put_pixel(t_image *image, int x, int y, int color);
 int					get_pixel(t_image *image, int x, int y);
 void				draw_line(t_image *image, t_point p1, t_point p2,
 								int color);
-void				draw_ceiling(t_ray *ray, t_vars *vars, int i);
-void				draw_floor(t_ray *ray, t_vars *vars, int i);
-void				draw_wall(t_ray *ray, t_vars *vars, int i);
-void				draw_sprites(t_vars *vars);
 
 /*
 **  parce.c
@@ -144,6 +155,11 @@ t_color				parce_color_line(const char *line);
 **  validate_map.c
 */
 int					check_cub_extension(char *line);
+void				check_elements(t_elements *elements);
+void				default_elements(t_elements *elements);
+void				check_line_for_player_position(t_vars *vars, char *line,
+														int i);
+void				check_line_for_sprites(t_vars *vars, char *line, int i);
 
 /*
 **  raycasting.c

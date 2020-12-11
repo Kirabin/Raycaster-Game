@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 13:25:18 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 14:08:46 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 17:42:48 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void			is_surrounded(t_vars *vars)
 int				map_validate(t_vars *vars)
 {
 	check_symbols(vars);
-	// check for all elemements;
 	is_surrounded(vars);
 	return (1);
 }

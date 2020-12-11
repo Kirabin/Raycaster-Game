@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 14:08:58 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 18:15:53 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,14 @@ static int		render_next_frame(t_vars *vars)
 	cast_rays(vars);
 	draw_sprites(vars);
 	free(vars->rays);
-	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
+	if (ft_strncmp(vars->arg, "--save", 6) == 0)
+	{
+		create_bmp(vars);
+		return (1);
+	}
+	else
+		mlx_put_image_to_window(vars->mlx, vars->window,
+								vars->frame.image, 0, 0);
 	return (1);
 }
 
@@ -39,7 +46,7 @@ t_vars			*default_vars(void)
 
 void			handle_error(const char *error)
 {
-	ft_putstr_fd((char *)error, STD_IN);
+	ft_putstr_fd((char *)error, STD_ERROR);
 	exit(0);
 }
 
@@ -61,15 +68,17 @@ int				main(int argc, char **argv)
 
 	if (argc == 2)
 	{
+		vars = default_vars();
+		read_map(argv[1], vars);
+		vars->frame = new_frame(vars);
+		vars->arg = argv[1];
 		if (ft_strncmp(argv[1], "--save", 6) == 0)
 		{
+			render_next_frame(vars);
 			// render and save image in bmp format.
 		}
 		else
 		{
-			vars = default_vars();
-			read_map(argv[1], vars);
-			vars->frame = new_frame(vars);
 			vars->window = mlx_new_window(vars->mlx, vars->resolution.x,
 											vars->resolution.y, "cubcraft");
 			mlx_hook(vars->window, 17, 1L << 17, free_all, vars);

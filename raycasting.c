@@ -6,13 +6,13 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 13:55:56 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 13:56:55 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 18:05:27 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	calc_delta(t_ray *ray)
+static void		calc_delta(t_ray *ray)
 {
 	ray->delta_v.x = (ray->x >= 0 ? 1 : -1);
 	ray->delta_h.y = (ray->y >= 0 ? 1 : -1);
@@ -28,7 +28,7 @@ static void	calc_delta(t_ray *ray)
 		ray->delta_v.y *= -1;
 }
 
-static void	calc_side(t_ray *ray, t_vars *vars)
+static void		calc_side(t_ray *ray, t_vars *vars)
 {
 	if (ray->y < 0)
 	{
@@ -56,67 +56,6 @@ static void	calc_side(t_ray *ray, t_vars *vars)
 	}
 }
 
-// set to return t_point side_h or side_v
-static void	cast_ray(t_ray *ray, t_vars *vars)
-{
-	t_list *node;
-
-	ray->sprites = 0;
-	while (1)
-	{
-		if (ray->x && ft_point_len(ray->side_v) < ft_point_len(ray->side_h))
-		{
-			ray->side = (ray->x > 0) ? 'e' : 'w';
-			ray->map_x += (ray->x >= 0) ? 1 : -1;
-			if (vars->map[ray->map_y][ray->map_x] == '2')
-			{
-				node = vars->sprites;
-				while (node)
-				{
-					if (((t_content *)(node->content))->x == ray->map_x &&
-						((t_content *)(node->content))->y == ray->map_y)
-						break ;
-					node = node->next;
-				}
-				if (node)
-				{
-					((t_content *)(node->content))->is_shown = 1;
-					((t_content *)(node->content))->contact.x = ray->map_x - vars->player.pos.x + 0.5;
-					((t_content *)(node->content))->contact.y = ray->map_y - vars->player.pos.y + 0.5;
-				}
-			}
-			if (vars->map[ray->map_y][ray->map_x] == '1')
-				break ;
-			ray->side_v = ft_point_add(ray->side_v, ray->delta_v);
-		}
-		else
-		{
-			ray->side = (ray->y > 0) ? 's' : 'n';
-			ray->map_y += (ray->y >= 0) ? 1 : -1;
-			if (vars->map[ray->map_y][ray->map_x] == '2')
-			{
-				node = vars->sprites;
-				while (node)
-				{
-					if (((t_content *)(node->content))->x == ray->map_x &&
-						((t_content *)(node->content))->y == ray->map_y)
-						break ;
-					node = node->next;
-				}
-				if (node)
-				{
-					((t_content *)(node->content))->is_shown = 1;
-					((t_content *)(node->content))->contact.x = ray->map_x - vars->player.pos.x + 0.5;
-					((t_content *)(node->content))->contact.y = ray->map_y - vars->player.pos.y + 0.5;
-				}
-			}
-			if (vars->map[ray->map_y][ray->map_x] == '1')
-				break ;
-			ray->side_h = ft_point_add(ray->side_h, ray->delta_h);
-		}
-	}
-}
-
 static double	calc_wall(t_ray *ray, t_vars *vars)
 {
 	double	cos_angle;
@@ -139,7 +78,7 @@ static double	calc_wall(t_ray *ray, t_vars *vars)
 	return (dist_to_wall_perp);
 }
 
-static void	set_shown_to_zero(t_list **list)
+static void		set_shown_to_zero(t_list **list)
 {
 	t_list *node;
 
@@ -153,7 +92,7 @@ static void	set_shown_to_zero(t_list **list)
 	}
 }
 
-void	cast_rays(t_vars *vars)
+void			cast_rays(t_vars *vars)
 {
 	t_ray		ray;
 	int			i;
@@ -165,8 +104,10 @@ void	cast_rays(t_vars *vars)
 	{
 		ray.map_x = (int)vars->player.pos.x;
 		ray.map_y = (int)vars->player.pos.y;
-		ray.x = vars->player.direction.x + vars->player.plane.x * (i * 2.0 / vars->resolution.x - 1);
-		ray.y = vars->player.direction.y + vars->player.plane.y * (i * 2.0 / vars->resolution.x - 1);
+		ray.x = vars->player.direction.x + vars->player.plane.x *
+					(i * 2.0 / vars->resolution.x - 1);
+		ray.y = vars->player.direction.y + vars->player.plane.y *
+					(i * 2.0 / vars->resolution.x - 1);
 		calc_delta(&ray);
 		calc_side(&ray, vars);
 		cast_ray(&ray, vars);

@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/11 15:19:16 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/11 18:09:49 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,18 +16,22 @@ LIBFT		=	libft/libft.a
 
 SRC			=	cub3d.c \
 				draw.c \
+				draw_sprites.c \
+				draw_wall.c \
 				raycasting.c \
+				raycasting_support.c \
 				bindings.c \
 				map.c \
 				map_validate.c \
-				map_parce.c
+				map_validate_2.c \
+				map_parce.c \
+				bmp.c
 
 OBJ			= $(SRC:.c=.o)
 INC_DIRS	=  -I. -I./libft -I./mlx_opengl
 HEADERS		= cub3d.h libft/libft.h
 MLX_OG		= -framework OpenGL -framework AppKit -Lmlx_opengl/ -lmlx
 MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx
-
 
 all: $(NAME)
 
