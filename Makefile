@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/09 09:35:34 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/11 11:01:57 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,4 +55,7 @@ fclean: clean
 re: fclean all
 
 run:
-	./$(NAME)
+	./$(NAME) levels/default.cub
+	
+save:
+	./$(NAME) --save

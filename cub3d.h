@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/07 18:57:23 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 10:42:06 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # define LEFT_ARROW 123
 # define RIGHT_ARROW 124
 # define ESC 53
-# define SPRITE_BG 0x00f6f6f6
 
 typedef struct		s_image
 {
@@ -72,6 +71,14 @@ typedef struct		s_ray
 	int				sprites;
 }					t_ray;
 
+typedef struct		s_content
+{
+	int				x;
+	int				y;
+	bool			is_shown;
+	t_point			contact;
+}					t_content;
+
 typedef struct		s_vars
 {
 	void			*mlx;
@@ -84,11 +91,25 @@ typedef struct		s_vars
 	int				*x;
 	t_texture		texture;
 	t_list			*sprites;
+	double			*rays;
 }					t_vars;
+
+typedef struct		s_elements
+{
+	int				resolution_is_set;
+	int				north_is_set;
+	int				south_is_set;
+	int				west_is_set;
+	int				east_is_set;
+	int				sprite_is_set;
+	int				floor_is_set;
+	int				ceiling_is_set;
+}					t_elements;
 
 void				read_map(char *file, t_vars *vars);
 int					map_validate(t_vars *vars);
 void				handle_error(const char *error);
+void				put_content(void *content);
 
 /*
 **  color.c
@@ -121,7 +142,7 @@ void				draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_col
 void				parce_resolution(t_vars *vars, const char *line);
 void				new_texture(t_vars *vars, t_image *texture, const char *line);
 int					parce_map_element(t_vars *vars, char *line);
-int					is_map_element(char *line);
+int					is_map_element(char *line, t_elements *elements);
 
 /*
 **  validate_map.c

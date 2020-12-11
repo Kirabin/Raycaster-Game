@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/09 10:02:02 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 11:01:02 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,35 @@ void	rotate(t_vars *vars, double rotation)
 	vars->player.plane = ft_point_rotate(vars->player.plane, rotation);
 }
 
+void	ft_lstclear_ab(t_list **lst, void (*del)(void*))
+{
+	t_list	*node;
+	t_list	*temp;
+
+	node = *lst;
+	if (!del || !*lst)
+		return ;
+	while (node)
+	{
+		put_content(node->content);
+		del(node->content);
+		temp = node;
+		node = node->next;
+		free(temp);
+	}
+	*lst = NULL;
+}
+
+int		free_all(t_vars *vars)
+{
+	mlx_destroy_image(vars->mlx, vars->frame.image);
+	mlx_destroy_window(vars->mlx, vars->window);
+	// free stuff
+	ft_lstclear_ab(&vars->sprites, free);
+	exit(1);
+	return (1);
+}
+
 int		key_pressed(int keycode, t_vars *vars)
 {
 	if (keycode == W)
@@ -60,9 +89,7 @@ int		key_pressed(int keycode, t_vars *vars)
 		rotate(vars, vars->player.turn_speed);
 	else if (keycode == ESC)
 	{
-		mlx_destroy_image(vars->mlx, vars->frame.image);
-		mlx_destroy_window(vars->mlx, vars->window);
-		// free stuff
+		free_all(vars);
 		exit(0);
 	}
 	return (1);  // what is return of this funcion?
@@ -141,6 +168,7 @@ void	calc_side(t_ray *ray, t_vars *vars)
 	}
 }
 
+// set to return dist to wall
 void	cast_ray(t_ray *ray, t_vars *vars)
 {	
 	ray->sprites = 0;
@@ -152,7 +180,23 @@ void	cast_ray(t_ray *ray, t_vars *vars)
 			ray->map_x += (ray->x >= 0) ? 1 : -1;
 			if (vars->map[ray->map_y][ray->map_x] == '2')
 			{
-				ray->sprites++;
+				t_list *node;
+				node = vars->sprites;
+				while (node)
+				{
+					if (((t_content *)(node->content))->x == ray->map_x &&
+						((t_content *)(node->content))->y == ray->map_y)
+						break;
+					node = node->next;
+				}
+				if (node)
+				{
+					((t_content *)(node->content))->is_shown = 1;
+					// ((t_content *)(node->content))->contact.x = ray->side_v.x;
+					// ((t_content *)(node->content))->contact.y = ray->side_v.y;
+					((t_content *)(node->content))->contact.x = ray->map_x - vars->player.pos.x + 0.5;
+					((t_content *)(node->content))->contact.y = ray->map_y - vars->player.pos.y + 0.5;
+				}
 			}
 			if (vars->map[ray->map_y][ray->map_x] == '1')
 				break;
@@ -164,7 +208,23 @@ void	cast_ray(t_ray *ray, t_vars *vars)
 			ray->map_y += (ray->y >= 0) ? 1 : -1;
 			if (vars->map[ray->map_y][ray->map_x] == '2')
 			{
-				ray->sprites++;
+				t_list *node;
+				node = vars->sprites;
+				while (node)
+				{
+					if (((t_content *)(node->content))->x == ray->map_x &&
+						((t_content *)(node->content))->y == ray->map_y)
+						break;
+					node = node->next;
+				}
+				if (node)
+				{
+					((t_content *)(node->content))->is_shown = 1;
+					// ((t_content *)(node->content))->contact.x = ray->side_h.x;
+					// ((t_content *)(node->content))->contact.y = ray->side_h.y;
+					((t_content *)(node->content))->contact.x = ray->map_x - vars->player.pos.x + 0.5;
+					((t_content *)(node->content))->contact.y = ray->map_y - vars->player.pos.y + 0.5;
+				}
 			}
 			if (vars->map[ray->map_y][ray->map_x] == '1')
 				break;
@@ -173,7 +233,7 @@ void	cast_ray(t_ray *ray, t_vars *vars)
 	}
 }
 
-void	calc_wall(t_ray *ray, t_vars *vars)
+double	calc_wall(t_ray *ray, t_vars *vars)
 {
 	double	cos_angle;
 	double	dist_to_wall_perp;
@@ -188,37 +248,8 @@ void	calc_wall(t_ray *ray, t_vars *vars)
 	ray->wall_end = ray->wall_height / 2 + vars->resolution.y / 2;
 	if (ray->wall_end >= vars->resolution.y)
 		ray->wall_end = vars->resolution.y - 1;
+	return (dist_to_wall_perp);
 }
-
-// void	draw_sprites(t_ray *ray, t_vars *vars, int i)
-// {
-// 	int		y;
-// 	int		color;
-	
-// 	int		sprite_start;
-// 	int		sprite_end;
-// 	t_point	sprite;
-// 	double	determinant;
-// 	double	transform_x;
-// 	double	transform_y;
-
-// 	// sprite_x = ;
-// 	// sprite_y = ;
-// 	determinant = 1.0 / (vars->player.plane.x * vars->player.direction.y - vars->player.plane.y * vars->player.direction.x);
-// 	transform_x = determinant * (vars->player.direction.y * sprite.x - vars->player.direction.x * sprite.y);
-// 	transform_y = determinant * (-vars->player.plane.y * sprite.x + vars->player.plane.x * sprite.y);
-
-// 	y = (sprite_start < 0) ? 0 : sprite_start;
-// 	while (y < vars->resolution.y && y <= sprite_end)
-// 	{
-// 		color = 0xFF00FF; // calculates color using sprite_x and sprite_y;
-// 		if (color != SPRITE_BG)
-// 			put_pixel(&vars->frame, -i, y, color);
-// 		y++;
-// 	}
-	
-	
-// }
 
 int		calc_texture_color(t_ray *ray, t_vars *vars, t_image texture, int y)
 {
@@ -242,16 +273,107 @@ void	draw_wall(t_ray *ray, t_vars *vars, int i)
 	while (y < vars->resolution.y && y <= ray->wall_end)
 	{
 		if (ray->side == 'n')
-			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.north, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y,
+						calc_texture_color(ray, vars, vars->texture.north, y));
 		else if (ray->side == 'e')
-			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.east, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y,
+						calc_texture_color(ray, vars, vars->texture.east, y));
 		else if (ray->side == 'w')
-			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.west, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y,
+						calc_texture_color(ray, vars, vars->texture.west, y));
 		else if (ray->side == 's')
-			put_pixel(&vars->frame, vars->resolution.x - i - 1, y, calc_texture_color(ray, vars, vars->texture.south, y));
+			put_pixel(&vars->frame, vars->resolution.x - i - 1, y,
+						calc_texture_color(ray, vars, vars->texture.south, y));
 		y++;
 	}
 	draw_line(&vars->frame, vars->resolution.x - i - 1, vars->resolution.y - 1, vars->resolution.x - i - 1, ray->wall_end, vars->texture.floor.argb);
+}
+
+void	set_shown_to_zero(t_list **list)
+{
+	t_list *node;
+	
+	node = *list;
+	if (!list)
+		return ;
+	while (node)
+	{
+		((t_content *)(node->content))->is_shown = 0;
+		node = node->next;
+	}
+}
+
+void	draw_sprites(t_vars *vars)
+{
+	
+	// sort sprites - farthest first
+	// node = vars->sprites;
+	// while (node)
+	// {
+	// 	if (((t_content *)(node->content))->is_shown == 1)
+	// 	{
+			
+	// 	}
+	// }
+	
+	t_list *node;
+	node = vars->sprites;
+	ft_lst_put(vars->sprites, put_content);
+	while (node)
+	{
+		if (!((t_content *)(node->content))->is_shown)
+		{
+			node = node->next;
+			continue;
+		}
+		double determinant = 1.0 / (vars->player.plane.x * vars->player.direction.y -
+									vars->player.direction.x * vars->player.plane.y);
+		
+		t_point transform;
+		transform.x = determinant * (vars->player.direction.y * ((t_content *)(node->content))->contact.x -
+									vars->player.direction.x * ((t_content *)(node->content))->contact.y);
+		transform.y = determinant * (-vars->player.plane.y * ((t_content *)(node->content))->contact.x +
+									vars->player.plane.x * ((t_content *)(node->content))->contact.y);
+									
+		int		sprite_screen_x = (int)((vars->resolution.x / 2) * (1 + transform.x / transform.y));
+		
+		int		sprite_height  = ft_abs((int)(vars->resolution.y / transform.y));
+		int		sprite_start_y = -sprite_height / 2 + vars->resolution.y / 2;
+		int		sprite_end_y   = sprite_height / 2 + vars->resolution.y / 2;
+		if (sprite_start_y < 0)
+			sprite_start_y = 0;
+		if (sprite_end_y >= vars->resolution.y)
+			sprite_end_y = vars->resolution.y - 1;
+		
+		int		sprite_width   = ft_abs((int)(vars->resolution.y / transform.y));
+		int		sprite_start_x = -sprite_width / 2 + sprite_screen_x;
+		int		sprite_end_x   = sprite_width / 2 + sprite_screen_x;
+		if (sprite_start_x < 0)
+			sprite_start_x = 0;
+		if (sprite_end_x >= vars->resolution.x)
+			sprite_end_x = vars->resolution.x - 1;
+		
+		int		stripe = sprite_start_x - 1;
+		while (++stripe < sprite_end_x)
+		{
+			int tex_x = (int)(256 * (stripe - (-sprite_width / 2 + sprite_screen_x)) *
+								512 / sprite_width) / 256;  // hard coded texture_width
+			
+			if (transform.y > 0 && transform.y < vars->rays[stripe]) // && transform.y < zbuffer[stripe]
+			{
+				int		y = sprite_start_y - 1;
+				while (++y < sprite_end_y)
+				{
+					int d = y * 256 - vars->resolution.y * 128 + sprite_height * 128;
+					int tex_y = ((d * 512) / sprite_height) / 256;
+					unsigned int color = get_pixel(&vars->texture.sprite, tex_x, tex_y);
+					if (color != 0x00B59696)
+						put_pixel(&vars->frame, vars->resolution.x - stripe, y, color);
+				}
+			}
+		}
+		node = node->next;
+	}
 }
 
 void	cast_rays(t_vars *vars)
@@ -260,6 +382,8 @@ void	cast_rays(t_vars *vars)
 	int			i;
 
 	i = -1;
+	vars->rays = malloc(sizeof(double) * vars->resolution.x);
+	set_shown_to_zero(&vars->sprites);
 	while (++i < vars->resolution.x)
 	{
 		ray.map_x = (int)vars->player.pos.x;
@@ -272,19 +396,17 @@ void	cast_rays(t_vars *vars)
 		calc_delta(&ray);
 		calc_side(&ray, vars);
 		cast_ray(&ray, vars);
-		calc_wall(&ray, vars);
+		vars->rays[i] = calc_wall(&ray, vars);
 		draw_wall(&ray, vars, i);
 	}
 }
 
 
-
 int		render_next_frame(t_vars *vars)
 {
-	ft_lstclear(&vars->sprites, free);
 	cast_rays(vars);
-	// draw_map(vars);
-	// draw_sprites(vars);
+	draw_sprites(vars);
+	free(vars->rays);
 	mlx_put_image_to_window(vars->mlx, vars->window, vars->frame.image, 0, 0);
 	return (1);
 }
@@ -300,6 +422,7 @@ t_vars	*default_vars(void)
 	vars->player.turn_speed = PI / 30;
 	vars->mlx = mlx_init();
 	vars->sprites = NULL;
+	vars->rays = NULL;
 	return (vars);
 }
 
@@ -326,20 +449,25 @@ int		main(int argc, char **argv)
 {
 	t_vars	*vars;
 
-	if (argc == 2 && ft_strncmp(argv[1], "--save", 6) == 0)
+	if (argc == 2)
 	{
-		// render and save image in bmp format.
-	}
-	vars = default_vars();
-	read_map("levels/default.cub", vars);
-	// ft_putcppn_fd(vars->map, vars->y, 1);
+		if (ft_strncmp(argv[1], "--save", 6) == 0)
+		{
+			// render and save image in bmp format.
+		}
+		else
+		{
+			vars = default_vars();
+			read_map(argv[1], vars);
 
-	vars->frame = new_frame(vars);
-	vars->window = mlx_new_window(vars->mlx, vars->resolution.x, 
-									vars->resolution.y, "cubcraft");
-	mlx_hook(vars->window, 2, 1L << 0, key_pressed, vars);  // why mask ?
-	// mlx_hook(fractol.mlx.win, 17, 1L << 17, clean_exit, &fractol);
-	mlx_loop_hook(vars->mlx, render_next_frame, vars);
-	mlx_loop(vars->mlx);
+			vars->frame = new_frame(vars);
+			vars->window = mlx_new_window(vars->mlx, vars->resolution.x, 
+											vars->resolution.y, "cubcraft");
+			mlx_hook(vars->window, 17, 1L << 17, free_all, vars);
+			mlx_hook(vars->window, 2, 1L << 0, key_pressed, vars);
+			mlx_loop_hook(vars->mlx, render_next_frame, vars);
+			mlx_loop(vars->mlx);
+		}
+	}
 	return (0);
 }

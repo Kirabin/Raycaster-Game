@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 10:45:28 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/08 15:23:35 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/10 10:11:39 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ void		new_texture(t_vars *vars, t_image *texture, const char *line)
 						vars->mlx, (char *)line,
 						&texture->width,
 						&texture->height);
+	if (texture->image == NULL)
+		handle_error("Error: texture path error");
 	texture->address = mlx_get_data_addr(
 						texture->image,
 						&texture->bits_per_pixel, &texture->len,
@@ -66,24 +68,24 @@ int			parce_map_element(t_vars *vars, char *line)  //check for duplicates
 	return (1);
 }
 
-int			is_map_element(char *line)
+int			is_map_element(char *line, t_elements *e)
 {
-	if (*line == 'R')
-		;
-	else if (*line == 'F')
-		;
-	else if (*line == 'C')
-		;
+	if (*line == 'R' && *(line + 1) == ' ')
+		e->resolution_is_set = (e->resolution_is_set == 0) ? 1 : -1;
+	else if (*line == 'F' && *(line + 1) == ' ')
+		e->floor_is_set = (e->floor_is_set == 0) ? 1 : -1;
+	else if (*line == 'C' && *(line + 1) == ' ')
+		e->ceiling_is_set = (e->ceiling_is_set == 0) ? 1 : -1;
 	else if (*line == 'S' && *(line + 1) == ' ')
-		;
+		e->sprite_is_set = (e->sprite_is_set == 0) ? 1 : -1;
 	else if (ft_strncmp(line, "NO", 2) == 0)
-		;
+		e->north_is_set = (e->north_is_set == 0) ? 1 : -1;
 	else if (ft_strncmp(line, "EA", 2) == 0)
-		;
+		e->east_is_set = (e->east_is_set == 0) ? 1 : -1;
 	else if (ft_strncmp(line, "SO", 2) == 0)
-		;
+		e->south_is_set = (e->south_is_set == 0) ? 1 : -1;
 	else if (ft_strncmp(line, "WE", 2) == 0)
-		;
+		e->west_is_set = (e->west_is_set == 0) ? 1 : -1;
 	else if (*line == '\n' || *line == '\0')
 		;
 	else

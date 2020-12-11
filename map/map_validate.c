@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 13:25:18 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/09 10:09:05 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/09 13:53:09 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,28 +43,8 @@ static void	check_symbols(t_vars *vars)
 	}
 }
 
-// void	ft_putcppn_fd(char **arr, int n, int fd)
-// {
-// 	int		i;
-// 	int		j;
-
-// 	i = 0;
-// 	if (!arr)
-// 		return ;
-// 	while (i < n && arr[i])
-// 	{
-// 		j = 0
-// 		while (arr[j])
-// 		ft_putstr_fd(arr[i], fd);
-// 		ft_putc_fd('\n', fd);
-// 		i++;
-// 	}
-// }
-
 void	flood_fill(t_vars *vars, char **flood, int x, int y)
 {
-	ft_putcppn_fd(flood, vars->y, 1);
-	ft_printf("\n");
 	if (x >= vars->x[y] || x < 0 || y < 0 || y >= vars->y ||
 		vars->map[y][x] == ' ')
 		handle_error("Error: map is not surrounded by walls\n");
@@ -79,12 +59,11 @@ void	flood_fill(t_vars *vars, char **flood, int x, int y)
 	return ;
 }
 
-
 void	is_surrounded(t_vars *vars)
 {
 	char	**flood;
 	int		i;
-	
+
 	if (!(flood = malloc(sizeof(char *) * vars->y)))
 		handle_error("Error: malloc couldn't allocate space\n");
 	i = 0;
