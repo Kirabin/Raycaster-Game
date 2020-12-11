@@ -6,13 +6,13 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 13:25:18 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/09 13:53:09 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 14:08:46 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int			check_cub_extension(char *line)
+int				check_cub_extension(char *line)
 {
 	int i;
 
@@ -24,11 +24,11 @@ int			check_cub_extension(char *line)
 	return (0);
 }
 
-static void	check_symbols(t_vars *vars)
+static void		check_symbols(t_vars *vars)
 {
 	int		i;
 	int		j;
-	
+
 	i = 0;
 	while (i < vars->y)
 	{
@@ -43,7 +43,7 @@ static void	check_symbols(t_vars *vars)
 	}
 }
 
-void	flood_fill(t_vars *vars, char **flood, int x, int y)
+void			flood_fill(t_vars *vars, char **flood, int x, int y)
 {
 	if (x >= vars->x[y] || x < 0 || y < 0 || y >= vars->y ||
 		vars->map[y][x] == ' ')
@@ -59,7 +59,7 @@ void	flood_fill(t_vars *vars, char **flood, int x, int y)
 	return ;
 }
 
-void	is_surrounded(t_vars *vars)
+void			is_surrounded(t_vars *vars)
 {
 	char	**flood;
 	int		i;
@@ -81,7 +81,7 @@ void	is_surrounded(t_vars *vars)
 	free(flood);
 }
 
-int			map_validate(t_vars *vars)
+int				map_validate(t_vars *vars)
 {
 	check_symbols(vars);
 	// check for all elemements;

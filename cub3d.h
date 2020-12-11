@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 10:42:06 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 14:09:51 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct		s_player
 	t_point			plane;
 	double			speed;
 	double			turn_speed;
+	bool			is_set;
 }					t_player;
 
 typedef struct		s_ray
@@ -112,14 +113,6 @@ void				handle_error(const char *error);
 void				put_content(void *content);
 
 /*
-**  color.c
-*/
-t_color				parce_color_line(const char *line);
-int					dim_color(t_color color, int value);
-int					argb_color(unsigned char a, unsigned char r,
-								unsigned char g, unsigned char b);
-
-/*
 **  vector.c
 */
 t_point				rotate_vector(t_point point, double angle);
@@ -130,24 +123,37 @@ double				vector_len(t_point point);
 */
 void				put_pixel(t_image *image, int x, int y, int color);
 int					get_pixel(t_image *image, int x, int y);
-void				draw_line(t_image *image, int x1, int y1, int x2, int y2, int color);
-void				draw_circle(t_image *image, t_point center, int radius, int color);
-void				draw_square(t_image *image, int x, int y, int radius, int color);
-void				draw_rectangle(t_image *image, int x1, int y1, int x2, int y2, int color);
-void				draw_line_gradient(t_image *image, int x1, int y1, int x2, int y2, t_color color);
+void				draw_line(t_image *image, t_point p1, t_point p2,
+								int color);
+void				draw_ceiling(t_ray *ray, t_vars *vars, int i);
+void				draw_floor(t_ray *ray, t_vars *vars, int i);
+void				draw_wall(t_ray *ray, t_vars *vars, int i);
+void				draw_sprites(t_vars *vars);
 
 /*
 **  parce.c
 */
 void				parce_resolution(t_vars *vars, const char *line);
-void				new_texture(t_vars *vars, t_image *texture, const char *line);
+void				new_texture(t_vars *vars, t_image *texture,
+								const char *line);
 int					parce_map_element(t_vars *vars, char *line);
 int					is_map_element(char *line, t_elements *elements);
+t_color				parce_color_line(const char *line);
 
 /*
 **  validate_map.c
 */
 int					check_cub_extension(char *line);
 
+/*
+**  raycasting.c
+*/
+void				cast_rays(t_vars *vars);
+
+/*
+**  bindings.c
+*/
+int					free_all(t_vars *vars);
+int					key_pressed(int keycode, t_vars *vars);
 
 #endif

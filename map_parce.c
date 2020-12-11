@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 10:45:28 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/10 10:11:39 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 14:12:56 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,17 @@
 
 void		parce_resolution_line(t_vars *vars, const char *line)
 {
-	// int		max_x;
-	// int		max_y;
+	// int		x;
+	// int		y;
 
-	// mlx_get_screen_size(vars->mlx, &max_x, &max_y);
-	// ft_printf("%d %d\n", max_x, max_y);
+	// mlx_get_screen_size(vars->mlx, &x, &y);
+	// ft_printf("%d %d\n", x, y);
 	line = ft_strskip_char(line, ' ');
 	vars->resolution.x = ft_atoi(line);
-	// if (vars->resolution.x > max_x)
-	// 	vars->resolution.x = max_x;
+	// vars->resolution.x = (vars->resolution.x > x) ? x : vars->resolution.x;
 	line = ft_strskip_char(ft_strchr(line, ' '), ' ');
 	vars->resolution.y = ft_atoi(line);
-	// if (vars->resolution.y > max_y)
-	// 	vars->resolution.y = max_y;
+	// vars->resolution.y = (vars->resolution.y > y) ? y : vars->resolution.y;
 }
 
 void		new_texture(t_vars *vars, t_image *texture, const char *line)
@@ -43,7 +41,7 @@ void		new_texture(t_vars *vars, t_image *texture, const char *line)
 						&texture->endian);
 }
 
-int			parce_map_element(t_vars *vars, char *line)  //check for duplicates
+int			parce_map_element(t_vars *vars, char *line)
 {
 	if (*line == 'R')
 		parce_resolution_line(vars, line + 1);
@@ -52,7 +50,8 @@ int			parce_map_element(t_vars *vars, char *line)  //check for duplicates
 	else if (*line == 'C')
 		vars->texture.ceilling = parce_color_line(line + 1);
 	else if (*line == 'S' && *(line + 1) == ' ')
-		new_texture(vars, &vars->texture.sprite, ft_strskip_char(line + 1, ' '));
+		new_texture(vars, &vars->texture.sprite,
+					ft_strskip_char(line + 1, ' '));
 	else if (ft_strncmp(line, "NO", 2) == 0)
 		new_texture(vars, &vars->texture.north, ft_strskip_char(line + 2, ' '));
 	else if (ft_strncmp(line, "EA", 2) == 0)

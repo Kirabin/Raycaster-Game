@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 10:21:52 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/10 11:26:01 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/11 14:31:27 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ static void	check_line_for_player_posision(t_vars *vars, char *line, int i)
 	j = -1;
 	while (++j < vars->x[i])
 	{
+		if (ft_strchr("NEWS", line[j]))
+		{
+			if (vars->player.is_set == true)
+				handle_error("Error: multiple player positions");
+			vars->player.is_set = true;
+		}
 		if (line[j] == 'N')
 		{
 			vars->player.direction = ft_point_new(0, -1);
@@ -49,7 +55,7 @@ static void	check_line_for_player_posision(t_vars *vars, char *line, int i)
 void		put_content(void *content)
 {
 	t_content cont;
-	
+
 	cont = *(t_content *)content;
 	ft_printf("x: %d, y: %d, is_shown: %d\n", cont.x, cont.y, cont.is_shown);
 }
@@ -58,14 +64,14 @@ static void	check_line_for_sprites(t_vars *vars, char *line, int i)
 {
 	int			j;
 	t_content	*content;
-	
+
 	j = -1;
-	if (!(content = malloc(sizeof(t_content))))
-		handle_error("Error: malloc couldn't allocate space\n");
 	while (++j < vars->x[i])
 	{
 		if (line[j] == '2')
 		{
+			if (!(content = malloc(sizeof(t_content))))
+				handle_error("Error: malloc couldn't allocate space\n");
 			content->x = j;
 			content->y = i;
 			content->is_shown = false;
@@ -74,10 +80,10 @@ static void	check_line_for_sprites(t_vars *vars, char *line, int i)
 	}
 }
 
-void		check_for_map_symbols(char *line)
+static void		check_for_map_symbols(char *line)
 {
 	int i;
-	
+
 	i = 0;
 	while (line[i])
 	{
@@ -136,7 +142,7 @@ void		parce_map_file(char *file, t_vars *vars)
 		i++;
 		free(line);
 	}
-	ft_lst_put(vars->sprites, put_content);
+	// ft_lst_put(vars->sprites, put_content);
 	free(line);
 	close(fd);
 }
@@ -176,7 +182,7 @@ void		check_elements(t_elements *elements)
 void		read_map(char *file, t_vars *vars)
 {
 	t_elements elements;
-	
+
 	default_elements(&elements);
 	if (!check_cub_extension(file))
 		handle_error("Error: map extension is not .cub\n");

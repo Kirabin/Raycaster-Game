@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/11 11:01:57 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/11 15:19:16 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,13 +14,13 @@ NAME		=	cub3D
 FLAGS		=	-Wall -Wextra #-Werror
 LIBFT		=	libft/libft.a
 
-SRC_MAP		=	map.c \
+SRC			=	cub3d.c \
+				draw.c \
+				raycasting.c \
+				bindings.c \
+				map.c \
 				map_validate.c \
 				map_parce.c
-
-SRC			= 	$(addprefix map/, $(SRC_MAP)) \
-				cub3d.c \
-				draw.c
 
 OBJ			= $(SRC:.c=.o)
 INC_DIRS	=  -I. -I./libft -I./mlx_opengl
@@ -31,7 +31,7 @@ MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx
 
 all: $(NAME)
 
-$(LIBFT):
+$(LIBFT): 
 	make -C libft
 
 %.o: %.c $(HEADERS)
