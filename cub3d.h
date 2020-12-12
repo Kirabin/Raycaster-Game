@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 18:14:06 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/12 11:07:59 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ void				draw_sprites(t_vars *vars);
 void				draw_wall(t_ray *ray, t_vars *vars, int i);
 void				check_for_sprite(t_ray *ray, t_vars *vars);
 void				cast_ray(t_ray *ray, t_vars *vars);
+void				render_frame_for_bmp(t_vars *vars);
+void				create_bmp(t_vars *vars);
 
 /*
 **  vector.c
