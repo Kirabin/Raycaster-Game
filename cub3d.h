@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/12 11:07:59 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/13 16:11:20 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # define RIGHT_ARROW 124
 # define ESC 53
 # define SPRITE_BG 0x00B59696
+# define WIDTH 2560
+# define HEIGHT 1440
 
 typedef struct		s_image
 {
@@ -104,6 +106,7 @@ typedef struct		s_vars
 	t_list			*sprites;
 	double			*rays;
 	char			*arg;
+	bool			save;
 }					t_vars;
 
 typedef struct		s_elements
@@ -127,7 +130,8 @@ void				draw_wall(t_ray *ray, t_vars *vars, int i);
 void				check_for_sprite(t_ray *ray, t_vars *vars);
 void				cast_ray(t_ray *ray, t_vars *vars);
 void				render_frame_for_bmp(t_vars *vars);
-void				create_bmp(t_vars *vars);
+void				create_bmp(t_image frame);
+int					free_all(t_vars *vars);
 
 /*
 **  vector.c
@@ -139,7 +143,7 @@ double				vector_len(t_point point);
 **  draw.c
 */
 void				put_pixel(t_image *image, int x, int y, int color);
-int					get_pixel(t_image *image, int x, int y);
+unsigned int		get_pixel(t_image *image, int x, int y);
 void				draw_line(t_image *image, t_point p1, t_point p2,
 								int color);
 

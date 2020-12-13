@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/11 18:09:49 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/13 16:12:08 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,10 +28,10 @@ SRC			=	cub3d.c \
 				bmp.c
 
 OBJ			= $(SRC:.c=.o)
-INC_DIRS	=  -I. -I./libft -I./mlx_opengl
+INC_DIRS	=  -I. -I./libft
 HEADERS		= cub3d.h libft/libft.h
-MLX_OG		= -framework OpenGL -framework AppKit -Lmlx_opengl/ -lmlx
-MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx
+MLX_OG		= -framework OpenGL -framework AppKit -lmlx -I./mlx_opengl
+# MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx -I./mlx_mms
 
 all: $(NAME)
 
@@ -42,8 +42,8 @@ $(LIBFT):
 	 gcc $(FLAGS) $(INC_DIRS) -c $< -o $@
 
 $(NAME): $(LIBFT) $(OBJ) $(INC)
-	# make -C mlx_opengl
-	# mv mlx_opengl/libmlx.dylib libmlx.dylib
+	# make -C mlx_mms
+	# mv mlx_mms/libmlx.dylib libmlx.dylib
 	gcc -g $(FLAGS) $(SRC) $(MLX_OG) -L./libft -lft -o $(NAME) $(INC_DIRS)    #remove SRC and -g
 
 clean:
@@ -62,4 +62,5 @@ run:
 	./$(NAME) levels/default.cub
 	
 save:
-	./$(NAME) --save
+	./$(NAME) levels/default.cub --save
+	chmod 777 first_frame.bmp

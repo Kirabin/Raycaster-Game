@@ -6,13 +6,13 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:30:10 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 17:37:08 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/13 15:27:08 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void		put_pixel(t_image *image, int x, int y, int color)
+void			put_pixel(t_image *image, int x, int y, int color)
 {
 	char	*dst;
 
@@ -20,7 +20,7 @@ void		put_pixel(t_image *image, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-int			get_pixel(t_image *image, int x, int y)
+unsigned int	get_pixel(t_image *image, int x, int y)
 {
 	char	*dst;
 
@@ -28,7 +28,7 @@ int			get_pixel(t_image *image, int x, int y)
 	return (*(unsigned int *)dst);
 }
 
-void		draw_line(t_image *frame, t_point p1, t_point p2, int color)
+void			draw_line(t_image *frame, t_point p1, t_point p2, int color)
 {
 	t_point		pixel;
 	float		ratio;

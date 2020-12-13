@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/12 11:10:20 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/13 15:23:07 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ static int		render_next_frame(t_vars *vars)
 							vars->frame.image, 0, 0);
 	return (1);
 }
-
-
 
 t_vars			*default_vars(void)
 {
@@ -42,6 +40,7 @@ t_vars			*default_vars(void)
 
 void			handle_error(const char *error)
 {
+	ft_putstr_fd("Error\n", STD_ERROR);
 	ft_putstr_fd((char *)error, STD_ERROR);
 	exit(0);
 }
@@ -55,6 +54,8 @@ static t_image	new_frame(t_vars *vars)
 	frame.address = mlx_get_data_addr(frame.image, &frame.bits_per_pixel,
 													&frame.len,
 													&frame.endian);
+	frame.width = vars->resolution.x;
+	frame.height = vars->resolution.y;
 	return (frame);
 }
 
@@ -67,13 +68,13 @@ int				main(int argc, char **argv)
 		vars = default_vars();
 		read_map(argv[1], vars);
 		vars->frame = new_frame(vars);
-		vars->arg = argv[1];
 		if (argc == 3)
 		{
 			if (ft_strncmp(argv[2], "--save", 6) == 0)
 			{
+				vars->save = true;
 				render_frame_for_bmp(vars);
-				// free_all
+				free_all(vars);
 			}
 			return (0);
 		}

@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 10:45:28 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 17:41:05 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/13 16:11:07 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,14 @@
 
 void		parce_resolution_line(t_vars *vars, const char *line)
 {
-	// int		x;
-	// int		y;
-
-	// mlx_get_screen_size(vars->mlx, &x, &y);
-	// ft_printf("%d %d\n", x, y);
 	line = ft_strskip_char(line, ' ');
 	vars->resolution.x = ft_atoi(line);
-	// vars->resolution.x = (vars->resolution.x > x) ? x : vars->resolution.x;
+	vars->resolution.x = (vars->resolution.x > WIDTH) ? WIDTH :
+														vars->resolution.x;
 	line = ft_strskip_char(ft_strchr(line, ' '), ' ');
 	vars->resolution.y = ft_atoi(line);
-	// vars->resolution.y = (vars->resolution.y > y) ? y : vars->resolution.y;
+	vars->resolution.y = (vars->resolution.y > HEIGHT) ? HEIGHT :
+														vars->resolution.y;
 }
 
 void		new_texture(t_vars *vars, t_image *texture, const char *line)
