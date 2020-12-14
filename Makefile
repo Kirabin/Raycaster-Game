@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/13 16:12:08 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/14 11:59:44 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,4 +63,3 @@ run:
 	
 save:
 	./$(NAME) levels/default.cub --save
-	chmod 777 first_frame.bmp

@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 17:36:43 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 17:37:57 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/14 12:13:14 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ static int		calc_texture_color(t_ray *ray, t_vars *vars, t_image texture,
 	int texture_y;
 	int texture_x;
 
-	texture_y = (y * 1.0 - ray->wall_start) / ray->wall_height * texture.height;
+	texture_y = ceil((y - ray->wall_start) * 1.0 / ray->wall_height *
+					texture.height);
 	if (ray->side == 'w' || ray->side == 'e')
 		texture_x = (vars->player.pos.y + ray->wall.y - (int)(ray->wall.y +
 					vars->player.pos.y)) * texture.width;

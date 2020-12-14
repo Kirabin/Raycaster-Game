@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 18:03:43 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 18:05:38 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/14 10:22:29 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,27 @@ void		check_for_sprite(t_ray *ray, t_vars *vars)
 	}
 }
 
+static int	cast_ray_x(t_ray *ray, t_vars *vars)
+{
+	ray->side = (ray->x > 0) ? 'e' : 'w';
+	ray->map_x += (ray->x >= 0) ? 1 : -1;
+	check_for_sprite(ray, vars);
+	if (vars->map[ray->map_y][ray->map_x] == '1')
+		return (1);
+	ray->side_v = ft_point_add(ray->side_v, ray->delta_v);
+	return (0);
+}
+
 void		cast_ray(t_ray *ray, t_vars *vars)
 {
 	while (1)
 	{
 		if (ray->x && ft_point_len(ray->side_v) < ft_point_len(ray->side_h))
 		{
-			ray->side = (ray->x > 0) ? 'e' : 'w';
-			ray->map_x += (ray->x >= 0) ? 1 : -1;
-			check_for_sprite(ray, vars);
-			if (vars->map[ray->map_y][ray->map_x] == '1')
+			if (cast_ray_x(ray, vars))
 				break ;
-			ray->side_v = ft_point_add(ray->side_v, ray->delta_v);
 		}
-		else
+		else if (ray->y)
 		{
 			ray->side = (ray->y > 0) ? 's' : 'n';
 			ray->map_y += (ray->y >= 0) ? 1 : -1;
@@ -58,6 +65,11 @@ void		cast_ray(t_ray *ray, t_vars *vars)
 			if (vars->map[ray->map_y][ray->map_x] == '1')
 				break ;
 			ray->side_h = ft_point_add(ray->side_h, ray->delta_h);
+		}
+		else if (ray->x)
+		{
+			if (cast_ray_x(ray, vars))
+				break ;
 		}
 	}
 }

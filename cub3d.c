@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/13 15:23:07 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/14 12:07:45 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ t_vars			*default_vars(void)
 	vars->mlx = mlx_init();
 	vars->sprites = NULL;
 	vars->rays = NULL;
+	vars->save = false;
 	return (vars);
 }
 

@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 13:55:56 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/11 18:05:27 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/14 11:19:19 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ static double	calc_wall(t_ray *ray, t_vars *vars)
 				(ft_point_len(ray->wall) * ft_point_len(vars->player.plane));
 	dist_to_wall_perp = sqrt(1 - cos_angle * cos_angle) *
 				ft_point_len(ray->wall);
-	ray->wall_height = vars->resolution.y / dist_to_wall_perp;
-	ray->wall_start = -ray->wall_height / 2 + vars->resolution.y / 2;
-	ray->wall_end = ray->wall_height / 2 + vars->resolution.y / 2;
+	ray->wall_height = ceil(vars->resolution.y * 1.0 / dist_to_wall_perp);
+	ray->wall_start = -floor(ray->wall_height * 1.0 / 2) + floor(vars->resolution.y * 1.0 / 2);
+	ray->wall_end = floor(ray->wall_height * 1.0 / 2) + floor(vars->resolution.y * 1.0 / 2);
 	if (ray->wall_end >= vars->resolution.y)
 		ray->wall_end = vars->resolution.y - 1;
 	return (dist_to_wall_perp);
