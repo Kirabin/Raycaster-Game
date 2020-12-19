@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 18:09:26 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/19 16:29:25 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 17:53:56 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void					create_bmp(t_image frame)
 	int				fd;
 	unsigned int	pixel;
 
-	if ((fd = open("first_frame.bmp", O_CREAT | O_WRONLY, 0x664)) == -1)
+	if ((fd = open("first_frame.bmp", O_CREAT | O_WRONLY, 0x644)) == -1)
 		handle_error("Error: couldn't create .bpm file");
 	write(fd, get_bitmap_file_header(frame), 14);
 	write(fd, get_bitmap_info_header(frame), 40);
