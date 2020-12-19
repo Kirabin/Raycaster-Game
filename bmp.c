@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/11 18:09:26 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/14 12:17:21 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 16:29:25 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static unsigned char	*get_bitmap_file_header(t_image frame)
 	static unsigned char	file_header[14];
 	unsigned int			file_size;
 
-	file_size = frame.height * frame.width + 14 + 40;
+	file_size = frame.height * frame.width * 4 + 14 + 40;
 	file_header[0] = (unsigned char)('B');
 	file_header[1] = (unsigned char)('M');
 	file_header[2] = (unsigned char)(file_size);
@@ -84,18 +84,18 @@ void					create_bmp(t_image frame)
 	int				fd;
 	unsigned int	pixel;
 
-	if ((fd = open("first_frame.bmp", O_CREAT | O_WRONLY, 0644)) == -1)
+	if ((fd = open("first_frame.bmp", O_CREAT | O_WRONLY, 0x664)) == -1)
 		handle_error("Error: couldn't create .bpm file");
 	write(fd, get_bitmap_file_header(frame), 14);
 	write(fd, get_bitmap_info_header(frame), 40);
 	i = frame.height;
-	while (--i > 0)
+	while (--i >= 0)
 	{
 		j = -1;
 		while (++j < frame.width)
 		{
 			pixel = get_pixel(&frame, j, i);
-			ft_putuc_fd((unsigned char)pixel, fd);
+			ft_putuc_fd((unsigned char)(pixel), fd);
 			ft_putuc_fd((unsigned char)(pixel >> 8), fd);
 			ft_putuc_fd((unsigned char)(pixel >> 16), fd);
 			ft_putuc_fd((unsigned char)(pixel >> 24), fd);
