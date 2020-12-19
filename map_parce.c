@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 10:45:28 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/13 16:11:07 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 17:19:28 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,17 @@
 
 void		parce_resolution_line(t_vars *vars, const char *line)
 {
+	int width;
+	int height;
+
+	mlx_get_screen_size(vars->mlx, &width, &height);
 	line = ft_strskip_char(line, ' ');
 	vars->resolution.x = ft_atoi(line);
-	vars->resolution.x = (vars->resolution.x > WIDTH) ? WIDTH :
+	vars->resolution.x = (vars->resolution.x > width) ? width :
 														vars->resolution.x;
 	line = ft_strskip_char(ft_strchr(line, ' '), ' ');
 	vars->resolution.y = ft_atoi(line);
-	vars->resolution.y = (vars->resolution.y > HEIGHT) ? HEIGHT :
+	vars->resolution.y = (vars->resolution.y > height) ? height :
 														vars->resolution.y;
 }
 

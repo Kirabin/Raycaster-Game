@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:54:39 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/19 16:10:43 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 17:19:18 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static int		render_next_frame(t_vars *vars)
 	free(vars->rays);
 	mlx_put_image_to_window(vars->mlx, vars->window,
 							vars->frame.image, 0, 0);
+	mlx_do_sync(vars->mlx);
 	return (1);
 }
 

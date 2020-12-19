@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/14 11:59:44 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/19 17:07:10 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ OBJ			= $(SRC:.c=.o)
 INC_DIRS	=  -I. -I./libft
 HEADERS		= cub3d.h libft/libft.h
 MLX_OG		= -framework OpenGL -framework AppKit -lmlx -I./mlx_opengl
-# MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx -I./mlx_mms
+MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx -I./mlx_mms
 
 all: $(NAME)
 
@@ -42,13 +42,13 @@ $(LIBFT):
 	 gcc $(FLAGS) $(INC_DIRS) -c $< -o $@
 
 $(NAME): $(LIBFT) $(OBJ) $(INC)
-	# make -C mlx_mms
-	# mv mlx_mms/libmlx.dylib libmlx.dylib
-	gcc -g $(FLAGS) $(SRC) $(MLX_OG) -L./libft -lft -o $(NAME) $(INC_DIRS)    #remove SRC and -g
+	make -C mlx_mms
+	mv mlx_mms/libmlx.dylib libmlx.dylib
+	gcc -g $(FLAGS) $(SRC) $(MLX_MM) -L./libft -lft -o $(NAME) $(INC_DIRS)    #remove SRC and -g
 
 clean:
-	# mv libmlx.dylib mlx_mms/libmlx.dylib
-	# make clean -C mlx_mms; cd ..
+	mv libmlx.dylib mlx_mms/libmlx.dylib
+	make clean -C mlx_mms; cd ..
 	make clean -C libft
 	rm -f $(OBJ)
 
