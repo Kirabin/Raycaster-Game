@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 11:43:38 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/19 17:34:15 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 17:58:08 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,4 +208,3 @@ char				**ft_split(char const *s, char c);
 char				*ft_uitoa(unsigned int n);
 
 #endif
-
