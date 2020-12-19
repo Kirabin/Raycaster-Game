@@ -6,7 +6,7 @@
 #    By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/24 19:40:30 by dmilan            #+#    #+#              #
-#    Updated: 2020/12/19 17:07:10 by dmilan           ###   ########.fr        #
+#    Updated: 2020/12/19 17:36:09 by dmilan           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,10 +28,10 @@ SRC			=	cub3d.c \
 				bmp.c
 
 OBJ			= $(SRC:.c=.o)
-INC_DIRS	=  -I. -I./libft
+INC_DIRS	=  -I. -I./libft -I./mlx_mms
 HEADERS		= cub3d.h libft/libft.h
-MLX_OG		= -framework OpenGL -framework AppKit -lmlx -I./mlx_opengl
-MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx -I./mlx_mms
+MLX_OG		= -framework OpenGL -framework AppKit -lmlx
+MLX_MM		= -framework OpenGL -framework AppKit -L. -lmlx
 
 all: $(NAME)
 
