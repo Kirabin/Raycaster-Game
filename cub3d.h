@@ -6,7 +6,7 @@
 /*   By: dmilan <dmilan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 09:55:50 by dmilan            #+#    #+#             */
-/*   Updated: 2020/12/13 16:11:20 by dmilan           ###   ########.fr       */
+/*   Updated: 2020/12/19 17:24:21 by dmilan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 # define RIGHT_ARROW 124
 # define ESC 53
 # define SPRITE_BG 0x00B59696
-# define WIDTH 2560
-# define HEIGHT 1440
 
 typedef struct		s_image
 {
