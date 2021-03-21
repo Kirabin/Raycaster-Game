@@ -9,3 +9,4 @@ cub3D
 *.bmp
 */*.swiftdoc
 */*.swiftmodule
+**/*.swiftsourceinfo
